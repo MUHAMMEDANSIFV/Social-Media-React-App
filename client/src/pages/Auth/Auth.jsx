@@ -176,8 +176,7 @@ function Login() {
 
     const [formdata, setformdata] = useState({
         username: "",
-        password: "",
-        confirmpassword: ""
+        password: ""
     })
 
     const navigate = useNavigate();
@@ -209,13 +208,12 @@ function Login() {
     }
 
     const handlevalidation = () => {
-        const { username, password, confirmpassword } = formdata;
+        const { username, password } = formdata;
 
         if (username.length === 0) toast.error("User Name required", toastoptions);
         else if (username.length < 6) toast.error("User Name must have at least 6 charaters",toastoptions)
         else if (password.length === 0) toast.error("Password is required", toastoptions)
         else if (password.length < 10) toast.error("Password must have 10 characters",toastoptions)
-        else if (password !== confirmpassword) toast.error("Password and ConfirmPassword must be same",toastoptions)
         else return true
         return false
 
@@ -240,9 +238,7 @@ function Login() {
                             onChange={(event) => handlechange(event)}
                             name='username'
                         />
-                    </div>
-
-                    <div>
+                  
                         <input type="password"
                             placeholder='Password'
                             className='infoinput'
@@ -251,13 +247,6 @@ function Login() {
                             name='password'
                         />
 
-                        <input type="password"
-                            placeholder='Confirm Password'
-                            className='infoinput'
-                            value={formdata.confirmpassword}
-                            onChange={(event) => handlechange(event)}
-                            name="confirmpassword"
-                        />
                     </div>
 
                     <div >
