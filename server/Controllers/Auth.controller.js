@@ -29,6 +29,7 @@ export const Login = async (req,res) => {
        if(password_checking){
          console.log(user)
          const data = {
+            _id:user._id,
             firstname:user.firstname,
             lastname:user.lastname,
             username:user.username,
@@ -63,36 +64,46 @@ export const Login = async (req,res) => {
      }
 }
 
- const refreshtoken = function(req,res) {
-   console.log("d")
-   if(req.session.accessToken){
-       console.log("hi")
-        jwt.verify(req.session.refreshtoken,process.env.REFRESH_TOKEN_SECRET_KEY,(err,user) => {
-           if(err) console.log(err)
-           else console.log(user)
-       })
-   }else{
-       console.log(req.session.accessToken)
-       res.json({error:"your jwt is not found"})
+export const refreshtoken = (req , res) => {
+   try{
+
+    if(req.cookies.refreshtoken){
+      jwt.verify(req.cookies.refreshtoken,process.env.REFRESH_TOKEN_SECRET_KEY,(err,done) => {
+         if(err){
+            res.json({error:"refresh token is not valid"})
+         }else{
+          const accesstoken = jwt.sign(user,process.env.ACCESS_TOKEN_SECRET_KEY)
+         res.cookie("accesstoken",accessToken,{
+            sameSite: 'strict',
+            path: '/',
+            expires: new Date(new Date().getTime() + 1000 * 60 * 60 * 60 * 24),
+               httpOnly: true,
+               secure:true,
+         }).json({message:"token refreshed"})
+         }
+      })
+    }else{
+      res.json({error:"refreshtoken is not found"})
+    }
+
+   }catch(err){
+    
    }
 }
 
 export const verifytokens = (req,res,next) => {
      try{
-       console.log("hi");
      if(req.cookies?.accesstoken){
-      console.log("hii")
        jwt.verify(req.cookies.accesstoken,process.env.ACCESS_TOKEN_SECRET_KEY,(err,done) => {
          if(err){
             let message = err.message
             if(message == "jwt expired"){
-               console.log("expr");
                res.json({status:"jwt expired"})
             }else{
                res.json({status:"jwt is not valid"})
             }
          }else{
-            console.log(done);
+            next()
          }
        })
      }else{

@@ -1,12 +1,15 @@
 import axios from 'axios'
-import React,{ useEffect } from 'react'
+import React,{ useState , useEffect } from 'react'
 import {} from "react-router-dom"
 import LeftSide from '../../Components/LeftSide/LeftSide'
 import PostSide from '../../Components/Postside/PostSide'
 import RightSide from '../../Components/RightSide/RightSide'
+import Loder from '../../Components/Loder/Loder'
 import './Home.css'
 
 function Home() {
+
+  const [Loderworking,setLoderworking] = useState(true)
  
   useEffect(() => {
     (async function(){
