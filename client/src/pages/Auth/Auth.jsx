@@ -5,7 +5,7 @@ import { ToastContainer, toast } from "react-toastify"
 import "react-toastify/dist/ReactToastify.css"
 import { useNavigate } from "react-router-dom"
 import { Fragment } from 'react';
-import axios from "../../Api/Axios.instence"
+import axios from "axios"
 
 function Auth() {
 
@@ -64,7 +64,8 @@ function Signup() {
         event.preventDefault()
         if (handlevalidation()) {
             toast.success("validaton success", toastoptions)
-            const user = await axios.post("/auth/newuser/signup", formdata)
+            axios.defaults.withCredentials = true;
+            const user = await axios.post("http://localhost:5000/auth/newuser/signup", formdata,{withCredentials:true})
             if (user.data.success) {
                 localStorage.setItem("user", user)
                 navigate("/home")
@@ -192,15 +193,16 @@ function Login() {
         event.preventDefault()
         if (handlevalidation()) {
          try{
-        const user = await axios.post("/auth/login", formdata)
+            axios.defaults.withCredentials = true;
+        const user = await axios.post("http://localhost:5000/auth/login", formdata,{withCredentials:true})
          if(user.data.success){
-            console.log(user.data.user)
-            localStorage.setItem("user",JSON.stringify(user.data.user))
+            
             navigate("/home")
          }else{
             toast.error(user.data.error,toastoptions)
          }
          }catch(err){
+            console.log(err);
             toast.error("Network issue Check your internet Connection",toastoptions)
          }
          

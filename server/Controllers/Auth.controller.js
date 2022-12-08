@@ -4,21 +4,19 @@ import jwt from "jsonwebtoken"
 
 
 export const Signup = async (req,res) => {
-   console.log(req.session.accesstoken)
-   res.json({session:req.session.accesstoken})
-   //   try{
-   //   let data = req.body;
-   //   data.password =await bcrypt.hash(data.password,10)
+     try{
+     let data = req.body;
+     data.password =await bcrypt.hash(data.password,10)
 
-   //   let user =await userSchema(data)
+     let user =await userSchema(data)
     
-   //   user = await user.save()
+     user = await user.save()
 
-   //   res.json({success:"User Signup Success",Userdata:user})
-   //   }catch (err) {
-   //        console.log(err.keyValue)
-   //      res.json({error:"Signup is failed please try again",message:Object.keys(err.keyValue)})
-   //   }
+     res.json({success:"User Signup Success",Userdata:user})
+     }catch (err) {
+          console.log(err.keyValue)
+        res.json({error:"Signup is failed please try again",message:Object.keys(err.keyValue)})
+     }
 }
 
 export const Login = async (req,res) => {
@@ -36,11 +34,22 @@ export const Login = async (req,res) => {
             username:user.username,
             email:user.email
          }
-          const accessToken = jwt.sign(data,process.env.ACCESS_TOKEN_SECRET_KEY)
-          req.session.accesstoken = accessToken;
-          console.log(req.session.accesstoken)
+          const accessToken = jwt.sign(data,process.env.ACCESS_TOKEN_SECRET_KEY,{expiresIn:"1m"})
+          const refreshtoken = jwt.sign(data,process.env.REFRESH_TOKEN_SECRET_KEY,{expiresIn:"1d"})
 
-          res.json({success:"Login success"})
+          res.cookie('refreshtoken', refreshtoken, {
+            sameSite: 'strict',
+            path: '/',
+            expires: new Date(new Date().getTime() + 1000 * 60 * 60 * 60 * 24),
+               httpOnly: true,
+               secure:true,
+         }).cookie("accesstoken",accessToken,{
+            sameSite: 'strict',
+            path: '/',
+            expires: new Date(new Date().getTime() + 1000 * 60 * 60 * 60 * 24),
+               httpOnly: true,
+               secure:true,
+         }).json({success:"Login success",jwt:accessToken})
        }else{
           res.json({error:"Password is incorrect Please try again"})
        }
@@ -54,7 +63,7 @@ export const Login = async (req,res) => {
      }
 }
 
-export const refreshtoken = (req,res) => {
+ const refreshtoken = function(req,res) {
    console.log("d")
    if(req.session.accessToken){
        console.log("hi")
@@ -66,4 +75,31 @@ export const refreshtoken = (req,res) => {
        console.log(req.session.accessToken)
        res.json({error:"your jwt is not found"})
    }
+}
+
+export const verifytokens = (req,res,next) => {
+     try{
+       console.log("hi");
+     if(req.cookies?.accesstoken){
+      console.log("hii")
+       jwt.verify(req.cookies.accesstoken,process.env.ACCESS_TOKEN_SECRET_KEY,(err,done) => {
+         if(err){
+            let message = err.message
+            if(message == "jwt expired"){
+               console.log("expr");
+               res.json({status:"jwt expired"})
+            }else{
+               res.json({status:"jwt is not valid"})
+            }
+         }else{
+            console.log(done);
+         }
+       })
+     }else{
+      console.log("jwt is not found");
+     }
+
+     }catch(err){
+      console.log(err)
+     }
 }
