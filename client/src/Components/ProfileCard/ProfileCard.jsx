@@ -1,13 +1,18 @@
-import React,{useState} from 'react'
+import React from 'react'
 import "./ProfileCard.css"
 import Cover from "../../img/cover.jpg"
 import Profile from "../../img/profileImg.jpg"
 import {Link} from "react-router-dom"
+import {useSelector} from "react-redux"
+
 
 function ProfileCard({ProfilePage}) {
- 
    
    
+
+ const User = useSelector((state) => {
+    return state.user;
+ })
 
     return (
         <div className='ProfileCard'>
@@ -17,28 +22,28 @@ function ProfileCard({ProfilePage}) {
             </div>
 
             <div className="ProfileName">
-                <span ></span>
-                <span>Mearn Stack </span>
+                <span >{User ? User.firstname: ""} {User ? User.lastname : ""}</span>
+                <span>{User ? User.bio : ""}</span>
             </div>
 
             <div className="FollowStatus">
                 <hr />
                 <div>
                     <div className="Follow">
-                        <span>6090</span>
+                        <span>{User ? User.followers : 0}</span>
                         <span>Followers</span>
                     </div>
                     <div className="vl"></div>
                     <div className="Follow">
-                        <span>6090</span>
-                        <span>Followers</span>
+                        <span>{User ? User.following : 0}</span>
+                        <span>Following</span>
                     </div>
                     {
                         ProfilePage &&
                         <>
                             <div className='vl'></div>
                             <div className='Follow'>
-                                <span>3</span>
+                                <span>{User.posts ? User.posts : 0}</span>
                                 <span>Posts</span>
                             </div>
                         </>
@@ -47,11 +52,11 @@ function ProfileCard({ProfilePage}) {
                 <hr />
             </div>
             <span>
-            {ProfilePage ? "Edit Profile"  : <Link className='Link' to="/profile">My Profile</Link>}
+            {ProfilePage ? <span>Edit Profile</span>  : <Link className='Link' to="/profile">My Profile</Link>}
             </span>
 
         </div>
     )
 }
 
-export default ProfileCard
+export default  React.memo(ProfileCard)

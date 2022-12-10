@@ -33,7 +33,10 @@ export const Login = async (req,res) => {
             firstname:user.firstname,
             lastname:user.lastname,
             username:user.username,
-            email:user.email
+            email:user.email,
+            bio:user.bio,
+            followers:user.followers.length,
+            following:user.following.length
          }
           const accessToken = jwt.sign(data,process.env.ACCESS_TOKEN_SECRET_KEY,{expiresIn:"1m"})
           const refreshtoken = jwt.sign(data,process.env.REFRESH_TOKEN_SECRET_KEY,{expiresIn:"1d"})
@@ -66,14 +69,13 @@ export const Login = async (req,res) => {
 
 export const refreshtoken = (req , res) => {
    try{
-
     if(req.cookies.refreshtoken){
       jwt.verify(req.cookies.refreshtoken,process.env.REFRESH_TOKEN_SECRET_KEY,(err,done) => {
          if(err){
             res.json({error:"refresh token is not valid"})
          }else{
-          const accesstoken = jwt.sign(user,process.env.ACCESS_TOKEN_SECRET_KEY)
-         res.cookie("accesstoken",accessToken,{
+          const accesstoken = jwt.sign(done,process.env.ACCESS_TOKEN_SECRET_KEY)
+         res.cookie("accesstoken",accesstoken,{
             sameSite: 'strict',
             path: '/',
             expires: new Date(new Date().getTime() + 1000 * 60 * 60 * 60 * 24),
@@ -107,10 +109,20 @@ export const verifytokens = (req,res,next) => {
          }
        })
      }else{
-      console.log("jwt is not found");
+      res.json({status:"jwt is not found"})
      }
 
      }catch(err){
       console.log(err)
      }
+}
+
+export const Logout = (req,res) => {
+   try{
+     console.log("hi")
+     res.clearCookie("accesstoken").clearCookie("refreshtoken").json({success:"cookie cleraed"})
+
+   }catch(err){
+
+   }
 }

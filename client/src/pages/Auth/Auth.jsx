@@ -1,17 +1,46 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, Fragment, useEffect } from 'react'
 import "./Auth.css"
 import Logo from "../../img/logo.png"
 import { ToastContainer, toast } from "react-toastify"
 import "react-toastify/dist/ReactToastify.css"
 import { useNavigate } from "react-router-dom"
-import { Fragment } from 'react';
-import axios from "axios"
+import axios from "../../Api/Axios.instence"
+import Loder from '../../Components/Loder/Loder'
 
 function Auth() {
 
+    
+
     const [state, setstate] = useState(true);
 
+    const [Loderworking,setLoderworking] = useState(true)
+
     const navigate = useNavigate()
+
+    useEffect(() => {
+        jwtveryfication()
+    })
+
+    const jwtveryfication = async () => {
+        axios.defaults.withCredentials = true
+        const response = await axios.get("/auth/jwtveryfication",{withCredentials:true})
+        if(response.data.success){
+            navigate("/home")
+        }else if(response.data.status === "jwt expired"){
+            refreshtoken()
+        }else{
+            setLoderworking(false)
+        }
+    }
+
+    const refreshtoken = async () => {
+        axios.defaults.withCredentials = true
+        const response = await axios.get("/auth/refreshtoken",{withCredentials:true})
+        console.log(response)
+        if(response.data.message){
+          jwtveryfication()
+        }
+      }
 
     function changestate() {
         setstate(!state)
@@ -25,16 +54,22 @@ function Auth() {
     })
 
     return (
-        <div className="Auth">
-            <div className="a-left">
-                <img src={Logo} alt="" />
-                <div className="Webname">
-                    <h1>Social Media</h1>
-                    <h6>Explore the ideas throughout the world</h6>
+        <Fragment >
+            {
+                Loderworking ? 
+                <Loder /> :
+                <div className="Auth">
+                <div className="a-left">
+                    <img src={Logo} alt="" />
+                    <div className="Webname">
+                        <h1>Social Media</h1>
+                        <h6>Explore the ideas throughout the world</h6>
+                    </div>
                 </div>
+                {state ? <Login /> : <Signup />}
             </div>
-            {state ? <Login /> : <Signup />}
-        </div>
+            }
+        </Fragment>
     )
 }
 
@@ -65,7 +100,7 @@ function Signup() {
         if (handlevalidation()) {
             toast.success("validaton success", toastoptions)
             axios.defaults.withCredentials = true;
-            const user = await axios.post("http://localhost:5000/auth/newuser/signup", formdata,{withCredentials:true})
+            const user = await axios.post("/auth/newuser/signup", formdata,{withCredentials:true})
             if (user.data.success) {
                 localStorage.setItem("user", user)
                 navigate("/home")
@@ -194,7 +229,7 @@ function Login() {
         if (handlevalidation()) {
          try{
             axios.defaults.withCredentials = true;
-        const user = await axios.post("http://localhost:5000/auth/login", formdata,{withCredentials:true})
+        const user = await axios.post("/auth/login", formdata,{withCredentials:true})
          if(user.data.success){
             
             navigate("/home")

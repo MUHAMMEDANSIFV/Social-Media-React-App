@@ -1,32 +1,66 @@
-import axios from 'axios'
-import React,{ useState , useEffect } from 'react'
-import {} from "react-router-dom"
+import axios from '../../Api/Axios.instence'
+import React, { useState, useEffect, Fragment } from 'react'
+import { useNavigate } from "react-router-dom"
 import LeftSide from '../../Components/LeftSide/LeftSide'
 import PostSide from '../../Components/Postside/PostSide'
 import RightSide from '../../Components/RightSide/RightSide'
 import Loder from '../../Components/Loder/Loder'
 import './Home.css'
+import {useDispatch} from "react-redux"
 
 function Home() {
 
-  const [Loderworking,setLoderworking] = useState(true)
- 
-  useEffect(() => {
-    (async function(){
-     axios.defaults.withCredentials = true;
-    const response = await axios.get("http://localhost:5000/user/home",{withCredentials:true})
-     if(response.status === "This jwt is not valid"){
+  const [Loderworking, setLoderworking] = useState(true)
 
-     }
-    }) ();
+  const navigate = useNavigate()
+
+  const dispatch = useDispatch()
+
+  useEffect(() => {
+    if(jwtveryfication()) setLoderworking(false)
   })
 
+       const jwtveryfication = async () => {
+      axios.defaults.withCredentials = true;
+      const response = await axios.get("/user/home", { withCredentials: true })
+      console.log(response.data)
+      if(response.data.success){
+       dispatch({
+        type:"user",
+        payload:response.data.user
+       })
+       return true;
+      }else if(response.data.status === "jwt expired"){
+       refreshtoken()
+      }else{
+        navigate("/")
+      }
+    }
+
+    const refreshtoken = async () => {
+      axios.defaults.withCredentials = true
+      const response = await axios.get("/auth/refreshtoken",{withCredentials:true})
+      console.log(response)
+      if(response.data.message){
+        jwtveryfication()
+      }else if(response.data.error){
+        navigate("/")
+      }
+    }
+
   return (
-    <div className='Home'>
-      <LeftSide />
-      <PostSide />
-      <RightSide />
-    </div>
+    <Fragment>
+      {
+        Loderworking ?
+           <Loder />
+                     :
+          <div className='Home'>
+            <LeftSide />
+            <PostSide />
+            <RightSide />
+          </div>
+      }
+    </Fragment>
   )
 }
 

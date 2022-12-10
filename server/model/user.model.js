@@ -1,4 +1,4 @@
-import mongoose from "mongoose"
+import mongoose, { Schema } from "mongoose"
 
 const userSchema = mongoose.Schema({
     firstname:{
@@ -29,7 +29,21 @@ const userSchema = mongoose.Schema({
     bio:{
         type:String,
         default:"I am a Social media user"
-    }
-})
+    },
+    followers:[
+        {
+            followerid:String
+        }
+    ],
+    following:[
+        {
+            followerid:String
+        }
+    ],
+    post:[
+        {type:Schema.Types.ObjectId , ref:"poste"}
+    ]
+},{ timestamps: true })
+
 
 export default mongoose.model("user",userSchema);
