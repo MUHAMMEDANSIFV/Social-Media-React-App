@@ -2,12 +2,14 @@ import Userschema from "../model/user.model.js"
 import bcrypt from "bcrypt"
 import jwt from "jsonwebtoken"  
 import cloudinary from "cloudinary" 
+import fs from "fs"
 
 cloudinary.config({
     cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
     api_key: process.env.CLOUDINARY_API_KEY,
     api_secret:process.env.CLOUDINARY_API_SECRET_KEY
 })
+
 export const home = async (req, res) => {
     try {
 
@@ -105,18 +107,33 @@ export const editpersonalinformation = (req,res) => {
 export const sharepost = async (req, res) => {
     try{
        const file = req.files.post[0];
-       if(file){
-         const result = await cloudinary.uploader.upload(file.tempFilePath,{
-            public_id: `${Date.now()}`,
-            resource_type:"auto",
-            folder:"images"
-         })
-         console.log(result)
-       }else{
-        res.json({error:"Sorry your not selected file"})
-       }
+    console.log("success")
     }catch (err){
         console.log(err)
-        res.json({error:"Some tecnical error find Over team will fix it",message:err})
+        res.json({error:"Some tecnical error find Over team will fix it soon",message:err})
     }
+}
+
+export const fileupload = async (req,res,next) => {
+     try{
+        const file = req.files.post[0]
+        console.log(file)
+        if(file){
+          const result = await cloudinary.uploader.upload(file.tempFilePath,{
+            public_id:Date.now()
+          })
+        console.log(result)
+        fs.unlink(file.tempFilePath,(error) => {
+            if(error)  console.log(error)
+            else console.log("Tempfile deleted")
+        })
+        next()
+        }else{
+            console.log("err")
+            res.json({error:"Please upload the file"})
+        }
+     }catch(err){
+       console.log(err)
+        res.json({errro:"Some tecnical error find Over team will fix it soon"})
+     }
 }

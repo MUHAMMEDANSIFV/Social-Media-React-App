@@ -5,20 +5,22 @@ import {UilScenery,UilPlayCircle,UilLocationPoint,UilSchedule,UilTimes} from "@i
 import swal from "sweetalert"
 import Formdata from "form-data"
 import axios from "../../Api/Axios.instence"
+import CropEasy from '../Crop/CropEasy'
 
 
 function PostShare() {
     const [Image,setImage] = useState(null)
+    const [photoURL,setPhotoURL] = useState(null)
+    const [openCrop,setOpenCrop] = useState(false) 
     const ImageRef = useRef()
     const formdata =new Formdata()
 
     const onImagechange = (event) => {
         if(event.target.files && event.target.files[0]){
             let image = event.target.files[0]
-            setImage({
-                image: URL.createObjectURL(image),
-                file:image
-        })
+            setPhotoURL(URL.createObjectURL(image))
+            setOpenCrop(true)
+
     }
         
     }
@@ -79,7 +81,8 @@ function PostShare() {
                 </div>
             }
             </div>
-            </div>
+            </div> 
+            <CropEasy photoURL={photoURL} openCrop={openCrop} setOpenCrop={setOpenCrop} setImage={setImage} />
         </Fragment>
     )
 }

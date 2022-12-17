@@ -1,7 +1,7 @@
 import express from "express"
 const router = express.Router()
 import {verifytokens} from "../Controllers/Auth.controller.js"
-import { home , profile , editprofile,sharepost} from "../Controllers/user.controller.js"
+import { home , profile , editprofile, sharepost , fileupload} from "../Controllers/user.controller.js"
 
   router.get("/home",verifytokens,home)
 
@@ -9,6 +9,6 @@ import { home , profile , editprofile,sharepost} from "../Controllers/user.contr
 
   router.post("/editprofile",verifytokens,editprofile)
 
-  router.post("/sharepost",verifytokens,sharepost)
+  router.post("/sharepost",verifytokens,fileupload,sharepost)
 
 export default router;
