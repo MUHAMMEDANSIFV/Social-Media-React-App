@@ -1,14 +1,16 @@
-import React from 'react'
+import React,{useState} from 'react'
 import "./ProfileCard.css"
 import Cover from "../../img/cover.jpg"
 import Profile from "../../img/profileImg.jpg"
 import {Link} from "react-router-dom"
 import {useSelector} from "react-redux"
+import EditprofileModel from '../EditprofileModal/EditprofileModel'
+
 
 
 function ProfileCard({ProfilePage}) {
    
-   
+    const [ModalOpened,setModalOpened] = useState(false);
 
  const User = useSelector((state) => {
     return state.user;
@@ -22,7 +24,7 @@ function ProfileCard({ProfilePage}) {
             </div>
 
             <div className="ProfileName">
-                <span >{User ? User.firstname: ""} {User ? User.lastname : ""}</span>
+                <span >{User ? User.username: ""}</span>
                 <span>{User ? User.bio : ""}</span>
             </div>
 
@@ -52,9 +54,9 @@ function ProfileCard({ProfilePage}) {
                 <hr />
             </div>
             <span>
-            {ProfilePage ? <span>Edit Profile</span>  : <Link className='Link' to="/profile">My Profile</Link>}
+            {ProfilePage ? <span onClick={() => setModalOpened(true)}>Edit Profile</span>  : <Link className='Link' to="/profile">My Profile</Link>}
             </span>
-
+            <EditprofileModel ModalOpened={ModalOpened} setModalOpened={setModalOpened} />
         </div>
     )
 }

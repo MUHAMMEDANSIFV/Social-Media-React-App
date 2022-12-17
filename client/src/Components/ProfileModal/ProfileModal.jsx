@@ -1,8 +1,46 @@
-import { Modal, useMantineTheme } from '@mantine/core';
+import React,{useState} from 'react';
+import { Modal, useMantineTheme  } from '@mantine/core';
+import {useSelector} from "react-redux"
+import {Alert} from "@mantine/core"
 import './ProfileModal.css'
 
 function ProfileModal({ModalOpened,setModalOpened}) {
   const theme = useMantineTheme();
+
+  const User = useSelector((state) => {
+    return state.user;
+  })
+
+  const [formdata,setformdata] = useState({
+    workat:User.workat,
+    livesin:User.livesin,
+    status:User.status,
+    password:"",
+    confirmpassword:""
+  })
+
+  const [alertopen,setalertopen] = useState("")
+
+  const handlesubmit = (e) => {
+    e.preventDefault()
+    if(handlevalidation()){
+
+    }
+  }
+
+  const handlevalidation = () => {
+      const {workat , livesin , status} = formdata
+
+      if(workat === "") setalertopen("Work At filed is requried")
+      else if(livesin === "") setalertopen("Lives In filed is requried")
+      else if(status === "") setalertopen("Status filed is required")
+      else return false
+      return true
+  }
+
+  const handlechange = (e) => {
+    setformdata({...formdata,[e.target.name]:e.target.value})
+  }
 
   return (
     <Modal
@@ -11,47 +49,74 @@ function ProfileModal({ModalOpened,setModalOpened}) {
       overlayBlur={3}
       size="50%"
       opened = {ModalOpened}
-      onClose = {()=>setModalOpened(false)}
+      onClose = {()=>{
+        setModalOpened(false)
+        setformdata({
+    workat:User.workat,
+    livesin:User.livesin,
+    status:User.status,
+    password:"",
+    confirmpassword:""
+  })
+      }}
     >
       <form className='infoForm'>
         <h3>Your info</h3>
+     
+        { alertopen && <Alert  style={{height:"50px"}} title="error" color="red">{alertopen}</Alert> }
 
         <div>
                     <input type="text"
                         placeholder='Work at'
                         className='infoinput'
-                        name='workat' />
+                        name='workat' 
+                        value={formdata.workat}
+                        onChange={(e) => handlechange(e)}
+                        />
                 </div>
 
                 <div>
                     <input type="text"
                         placeholder='Lives In'
                         className='infoinput'
-                        name='location' />
+                        name='livesin'
+                        value={formdata.livesin}
+                        onChange={(e) => handlechange(e)}
+                        />
                 </div>
 
                 <div>
                     <input type="text"
                         placeholder='Status'
                         className='infoinput'
-                        name='status' />
+                        name='status' 
+                        value={formdata.status}
+                        onChange={(e) => handlechange(e)}
+                        />
                 </div>
 
                 <div>
-                    <input type="text"
+                    <input type="password"
                         placeholder='Password'
                         className='infoinput'
-                        name='Password' />
+                        name='password'
+                        value={formdata.password}
+                        onChange={(e) => handlechange(e)}
+                         />
 
-                    <input type="text"
+                    <input type="password"
                         placeholder='Confirm Password'
-                        className='infoinput' />
+                        className='infoinput'
+                        name='confirmpassword'
+                        value={formdata.confimpassword}
+                        onChange={(e) => handlechange(e)}
+                         />
                 </div>
                 <div>
                 </div>
 
                 <div>
-                    <button className='button info-Button'>Update Details</button>
+                    <button onClick={(e) => handlesubmit(e)} className='button info-Button'>Update Details</button>
                 </div>
       </form>
     </Modal>

@@ -28,6 +28,10 @@ export const Login = async (req,res) => {
        const password_checking = await  bcrypt.compare(password,user.password)
        if(password_checking){
          console.log(user)
+         const posts = user.posts ? user.posts.length : 0 ;
+         const workat = user.workat ? user.workat :  "please add work informaion"
+         const livesin = user.livesin ? user.livesin : "please add your place and details"
+         const status = user.status ? user.status : "please add your status"
          const data = {
             _id:user._id,
             firstname:user.firstname,
@@ -36,7 +40,11 @@ export const Login = async (req,res) => {
             email:user.email,
             bio:user.bio,
             followers:user.followers.length,
-            following:user.following.length
+            following:user.following.length,
+            posts:posts,
+            workat:workat,
+            livesin:livesin,
+            status:status
          }
           const accessToken = jwt.sign(data,process.env.ACCESS_TOKEN_SECRET_KEY,{expiresIn:"1m"})
           const refreshtoken = jwt.sign(data,process.env.REFRESH_TOKEN_SECRET_KEY,{expiresIn:"1d"})
@@ -44,13 +52,13 @@ export const Login = async (req,res) => {
           res.cookie('refreshtoken', refreshtoken, {
             sameSite: 'strict',
             path: '/',
-            expires: new Date(new Date().getTime() + 1000 * 60 * 60 * 60 * 24),
+            expires: new Date(new Date().getTime() + 100 * 1000 ),
                httpOnly: true,
                secure:true,
          }).cookie("accesstoken",accessToken,{
             sameSite: 'strict',
             path: '/',
-            expires: new Date(new Date().getTime() + 1000 * 60 * 60 * 60 * 24),
+            expires: new Date(new Date().getTime() + 100 * 1000),
                httpOnly: true,
                secure:true,
          }).json({success:"Login success",jwt:accessToken})
@@ -105,6 +113,7 @@ export const verifytokens = (req,res,next) => {
                res.json({status:"jwt is not valid"})
             }
          }else{
+            req.userinfo = done
             next()
          }
        })

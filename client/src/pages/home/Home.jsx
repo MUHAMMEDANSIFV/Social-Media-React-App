@@ -17,10 +17,12 @@ function Home() {
   const dispatch = useDispatch()
 
   useEffect(() => {
-    if(jwtveryfication()) setLoderworking(false)
+    jwtveryfication(()=>{
+      setLoderworking(false)
+    })
   })
 
-       const jwtveryfication = async () => {
+       const jwtveryfication = async (loderstop) => {
       axios.defaults.withCredentials = true;
       const response = await axios.get("/user/home", { withCredentials: true })
       console.log(response.data)
@@ -29,7 +31,7 @@ function Home() {
         type:"user",
         payload:response.data.user
        })
-       return true;
+       loderstop()
       }else if(response.data.status === "jwt expired"){
        refreshtoken()
       }else{

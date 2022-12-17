@@ -25,3 +25,9 @@
     margin-top: 6rem;
     align-self: flex-end;
 }
+
+.details-notadded{
+    color: gray;
+    font-size: 0.90rem;
+    padding-left: 10px;
+}

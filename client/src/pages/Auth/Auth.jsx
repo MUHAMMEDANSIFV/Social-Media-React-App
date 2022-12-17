@@ -47,11 +47,6 @@ function Auth() {
     }
     Auth.changestate = changestate;
 
-    useEffect(() => {
-        if (localStorage.getItem("user")) {
-            navigate("/home")
-        }
-    })
 
     return (
         <Fragment >
@@ -102,8 +97,7 @@ function Signup() {
             axios.defaults.withCredentials = true;
             const user = await axios.post("/auth/newuser/signup", formdata,{withCredentials:true})
             if (user.data.success) {
-                localStorage.setItem("user", user)
-                navigate("/home")
+                navigate("/")
             } else if (user.data.message) {
                 toast.error(`${user.data.message[0]} is already taken try another one`, toastoptions)
             } else {

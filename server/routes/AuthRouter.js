@@ -8,7 +8,9 @@ import { Signup , Login ,refreshtoken , verifytokens ,Logout } from "../Controll
 
  router.get("/refreshtoken",refreshtoken)
 
- router.get("/jwtveryfication", verifytokens,(req,res) => res.json({success:"jwt is veryfied"}))
+ router.get("/jwtveryfication", verifytokens,(req,res) =>{ res.json({success:"jwt is veryfied"})
+ console.log("hi");
+})
 
  router.get("/Logout",Logout)
 

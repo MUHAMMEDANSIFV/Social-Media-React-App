@@ -3,8 +3,16 @@ import dotenv  from "dotenv"
 import cors  from "cors"
 import connect from "./Connections/mongoos.connection.js"
 import cookieParser from "cookie-parser"
+import fileUpload from "express-fileupload"
+import cloudinary from "cloudinary"
+
 
 dotenv.config();
+cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret:process.env.CLOUDINARY_API_SECRET_KEY
+})
 
 const app = express()
 dotenv.config()
@@ -13,7 +21,12 @@ import  AuthRouter  from "./routes/AuthRouter.js"
 import UserRouter from "./routes/user.js"
 
 app.use(express.json())
-app.use(express.urlencoded({extended:true}))
+app.use(fileUpload({
+    useTempFiles:true,
+    limits:{
+        fileSize: 10 * 100 * 1000
+    }
+}))
 app.use(cookieParser("dsafhaskdfjsdaklfjsklafjsdfgggsffgsdfddfgdgf"))
 
 app.use(cors({credentials:true,origin:"http://localhost:3000"}))
