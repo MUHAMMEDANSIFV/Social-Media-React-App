@@ -1,12 +1,19 @@
-import mongoose from "mongoose";
+import mongoose,{Schema} from "mongoose";
 
-const Schema = mongoose.Schema(
+const PostSchema = mongoose.Schema(
         {
-            post:String,
+            user:{
+                type:Schema.Types.ObjectId , ref:"user"
+            },
+            posturl:String,
+            postid:String,
+            discription:String,
             likes:[
                 {
-                    user:String,
-                    likedAt:new Date()
+                    user:{
+                        type:Schema.Types.ObjectId,ref:"user"
+                    },
+                    likedAt:Date
                 }
             ],
             comments:[
@@ -33,7 +40,9 @@ const Schema = mongoose.Schema(
                 {
                     sharefrom:String,
                     shareto:String,
-                    time:new Date()
+                    time:Date
                 }
             ]
         },{timestamps: true})
+
+export default mongoose.model("post",PostSchema)

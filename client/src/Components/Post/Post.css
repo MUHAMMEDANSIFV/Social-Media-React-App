@@ -9,7 +9,7 @@
 
 .Post>img{
     width: 100%;
-    max-height: 25rem;
+    max-height: 40rem;
     object-fit: cover;
     border-radius: 0.5rem;
 }
@@ -25,4 +25,13 @@
 .detail{
     margin-top: 10px;
     margin-bottom: 10px;
+}
+
+.post-more-options{
+    float: right;
+    margin: 15px;
+    border-radius: 50%;
+}
+
+.post-more-options:hover{
 }

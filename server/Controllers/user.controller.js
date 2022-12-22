@@ -1,14 +1,6 @@
 import Userschema from "../model/user.model.js"
 import bcrypt from "bcrypt"
 import jwt from "jsonwebtoken"  
-import cloudinary from "cloudinary" 
-import fs from "fs"
-
-cloudinary.config({
-    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-    api_key: process.env.CLOUDINARY_API_KEY,
-    api_secret:process.env.CLOUDINARY_API_SECRET_KEY
-})
 
 export const home = async (req, res) => {
     try {
@@ -20,12 +12,16 @@ export const home = async (req, res) => {
     }
 }
 
-export const profile = (req, res) => {
+export const profile = async (req, res) => {
     try {
-        res.json({ message: 'success', user: req.userinfo })
+         const id = req.userinfo._id
+
+         const user = await Userschema.findById(id).populate("post")
+
+        res.status(200).json({ message: 'success', user: user })
 
     } catch (err) {
-
+        res.status(502).json({error:err})
     }
 }
 
@@ -101,39 +97,5 @@ export const editpersonalinformation = (req,res) => {
          console.log(req.body)
      }catch(err) {
         res.json({error:"Some tecnical error find"})
-     }
-}
-
-export const sharepost = async (req, res) => {
-    try{
-       const file = req.files.post[0];
-    console.log("success")
-    }catch (err){
-        console.log(err)
-        res.json({error:"Some tecnical error find Over team will fix it soon",message:err})
-    }
-}
-
-export const fileupload = async (req,res,next) => {
-     try{
-        const file = req.files.post[0]
-        console.log(file)
-        if(file){
-          const result = await cloudinary.uploader.upload(file.tempFilePath,{
-            public_id:Date.now()
-          })
-        console.log(result)
-        fs.unlink(file.tempFilePath,(error) => {
-            if(error)  console.log(error)
-            else console.log("Tempfile deleted")
-        })
-        next()
-        }else{
-            console.log("err")
-            res.json({error:"Please upload the file"})
-        }
-     }catch(err){
-       console.log(err)
-        res.json({errro:"Some tecnical error find Over team will fix it soon"})
      }
 }

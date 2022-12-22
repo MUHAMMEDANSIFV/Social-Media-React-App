@@ -8,12 +8,11 @@ function SideBar() {
   const navigate = useNavigate()
 
   const Logout = async () => {
-     axios.defaults.withCredentials = true
      const response = await axios.get("/auth/Logout",{withCredentials:true})
-     if(response.data.success){
+     if(response.success){
       navigate("/")
      }else{
-       alert(response.data.error)
+       alert(response.error)
      }
 
   }

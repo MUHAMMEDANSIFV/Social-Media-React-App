@@ -1,20 +1,21 @@
-import React,{Fragment, useState, useEffect} from 'react'
+import React,{useState,Fragment, useEffect} from 'react'
 import {useNavigate} from "react-router-dom"
 import './Profile.css'
 import  ProfileRight from "../../Components/ProfileRight/ProfileRight"
 import ProfileCard from '../../Components/ProfileCard/ProfileCard'
-import Postside from "../../Components/Postside/PostSide"
 import LeftSide from '../../Components/LeftSide/LeftSide'
-import Loder from '../../Components/Loder/Loder'
 import axios from '../../Api/Axios.instence'
 import {useDispatch} from "react-redux"
+import PostShare from '../../Components/PostShare/PostShare'
+import Posts from '../../Components/Posts/Posts'
+import { Loader } from '@mantine/core'
+import Loder from '../../Components/Loder/Loder'
 
 function Profile() {
 
   const navigate = useNavigate()
-
-  const [Loderworking,setLoderworking] = useState(true)
-
+  const [Loading,setLoading] = useState(true)
+  const [PostsList,setPostsList] = useState(true)
   const dispatch = useDispatch()
 
   useEffect(()=>{
@@ -22,47 +23,37 @@ function Profile() {
   })
 
   const jwtveryfication = async () => {
-     axios.defaults.withCredentials = true
      const response = await axios.get("/user/profile")
-     if(response.data.message){ 
+     if(response.message){ 
       dispatch({
         type:"user",
-        payload:response.data.user
+        payload:response.user
        })
-        setLoderworking(false)
-     }else if(response.data.status === "jwt expired"){
-      refreshtoken()
+       setPostsList(response.user.post)
+       setLoading(false)
      }else{
        navigate("/")
      }
   }
-
-  const refreshtoken = async () => {
-    axios.defaults.withCredentials = true
-    const response = await axios.get("/auth/refreshtoken",{withCredentials:true})
-    console.log(response)
-    if(response.data.message){
-      jwtveryfication()
-    }else if(response.data.error){
-      navigate("/")
-    }
-  }
-
+  if(Loading) return (
+    <Fragment>
+    <div className="Profile">
+      <LeftSide />
+       <Loder />
+    </div>
+</Fragment>
+  )
   return (
     <Fragment>
-      {
-        Loderworking ?
-        <Loder /> :
         <div className="Profile">
           <LeftSide />
-
         <div className="ProfileCenter">
             <ProfileCard ProfilePage={true}/>
-            <Postside />
+            <PostShare />
+            <Posts PostsList={PostsList} />
         </div>
         <ProfileRight />
         </div>
-      }
     </Fragment>
   )
 }

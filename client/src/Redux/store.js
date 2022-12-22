@@ -6,7 +6,7 @@ const initiolvalue = {
 
 const appReducer = (prevstate = initiolvalue,action) => {
     return {
-        ...prevstate,
+      ...prevstate,
       [action.type] :action.payload
     }
 }

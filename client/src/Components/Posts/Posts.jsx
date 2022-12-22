@@ -1,20 +1,19 @@
 import React from 'react'
 import "./Posts.css"
-import {PostData} from "../../Data/PostsData"
 import Post from '../Post/Post'
 
-function Posts() {
+function Posts({PostsList}) {
   return (
     <div className='Posts'>
-      {
-        PostData.map((post,id) => {
-          return(
-            <Post data={post} id={id}/>
-          )
-        })
-      }
+        {
+          PostsList.map((data,id) => {
+            return(
+             <Post key={id} data={data} />
+            )
+          })
+        }
     </div>
   )
 }
 
-export default Posts;
+export default React.memo(Posts);

@@ -47,6 +47,12 @@
   border:2px solid var(--orange);
 }
 
+.Loading{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 ::-webkit-scrollbar{
   display: none;
 }

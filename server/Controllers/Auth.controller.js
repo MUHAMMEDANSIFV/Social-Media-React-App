@@ -48,17 +48,19 @@ export const Login = async (req,res) => {
          }
           const accessToken = jwt.sign(data,process.env.ACCESS_TOKEN_SECRET_KEY,{expiresIn:"1m"})
           const refreshtoken = jwt.sign(data,process.env.REFRESH_TOKEN_SECRET_KEY,{expiresIn:"1d"})
+          var time = Date.now()
+          var expireTime = time + 1000*36000;
 
           res.cookie('refreshtoken', refreshtoken, {
             sameSite: 'strict',
             path: '/',
-            expires: new Date(new Date().getTime() + 100 * 1000 ),
+            maxAge: 3600000 * 24 ,
                httpOnly: true,
                secure:true,
          }).cookie("accesstoken",accessToken,{
             sameSite: 'strict',
             path: '/',
-            expires: new Date(new Date().getTime() + 100 * 1000),
+            maxAge: 3600000 * 24 ,
                httpOnly: true,
                secure:true,
          }).json({success:"Login success",jwt:accessToken})
@@ -80,24 +82,34 @@ export const refreshtoken = (req , res) => {
     if(req.cookies.refreshtoken){
       jwt.verify(req.cookies.refreshtoken,process.env.REFRESH_TOKEN_SECRET_KEY,(err,done) => {
          if(err){
-            res.json({error:"refresh token is not valid"})
+            res.status(498).json({error:"refresh token is not valid"})
          }else{
-          const accesstoken = jwt.sign(done,process.env.ACCESS_TOKEN_SECRET_KEY)
-         res.cookie("accesstoken",accesstoken,{
+            delete done.iat
+            delete done.exp
+            const accessToken = jwt.sign(done,process.env.ACCESS_TOKEN_SECRET_KEY,{expiresIn:"1m"})
+            const refreshtoken = jwt.sign(done,process.env.REFRESH_TOKEN_SECRET_KEY,{expiresIn:"1d"})
+      
+         res.cookie('refreshtoken', refreshtoken, {
             sameSite: 'strict',
             path: '/',
-            expires: new Date(new Date().getTime() + 1000 * 60 * 60 * 60 * 24),
+            maxAge: 3600000 * 24 ,
                httpOnly: true,
                secure:true,
-         }).json({message:"token refreshed"})
+         }).cookie("accesstoken",accessToken,{
+            sameSite: 'strict',
+            path: '/',
+            maxAge: 3600000 * 24 ,
+               httpOnly: true,
+               secure:true,
+         }).status(200).json({message:"token refreshed"})
          }
       })
     }else{
-      res.json({error:"refreshtoken is not found"})
+      res.status(498).json({error:"refreshtoken is not found"})
     }
 
    }catch(err){
-    
+    console.log(err)
    }
 }
 
@@ -108,7 +120,7 @@ export const verifytokens = (req,res,next) => {
          if(err){
             let message = err.message
             if(message == "jwt expired"){
-               res.json({status:"jwt expired"})
+               res.status(401).json({status:"jwt expired"})
             }else{
                res.json({status:"jwt is not valid"})
             }
@@ -128,7 +140,6 @@ export const verifytokens = (req,res,next) => {
 
 export const Logout = (req,res) => {
    try{
-     console.log("hi")
      res.clearCookie("accesstoken").clearCookie("refreshtoken").json({success:"cookie cleraed"})
 
    }catch(err){

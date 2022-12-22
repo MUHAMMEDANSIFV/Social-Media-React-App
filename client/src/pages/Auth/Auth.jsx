@@ -4,8 +4,8 @@ import Logo from "../../img/logo.png"
 import { ToastContainer, toast } from "react-toastify"
 import "react-toastify/dist/ReactToastify.css"
 import { useNavigate } from "react-router-dom"
-import axios from "../../Api/Axios.instence"
 import Loder from '../../Components/Loder/Loder'
+import {jwtverifycation , Login as Loginapi , Signup as Signupapi} from "../../Api/Auth.Api.js"
 
 function Auth() {
 
@@ -18,29 +18,15 @@ function Auth() {
     const navigate = useNavigate()
 
     useEffect(() => {
-        jwtveryfication()
+         jwtverifycation((status)=>{
+            console.log(status)
+            if(status.success){
+                navigate("/home")
+            }else{
+                setLoderworking(false)
+            }
+         })
     })
-
-    const jwtveryfication = async () => {
-        axios.defaults.withCredentials = true
-        const response = await axios.get("/auth/jwtveryfication",{withCredentials:true})
-        if(response.data.success){
-            navigate("/home")
-        }else if(response.data.status === "jwt expired"){
-            refreshtoken()
-        }else{
-            setLoderworking(false)
-        }
-    }
-
-    const refreshtoken = async () => {
-        axios.defaults.withCredentials = true
-        const response = await axios.get("/auth/refreshtoken",{withCredentials:true})
-        console.log(response)
-        if(response.data.message){
-          jwtveryfication()
-        }
-      }
 
     function changestate() {
         setstate(!state)
@@ -93,16 +79,15 @@ function Signup() {
     const handlesubmit = async (event) => {
         event.preventDefault()
         if (handlevalidation()) {
-            toast.success("validaton success", toastoptions)
-            axios.defaults.withCredentials = true;
-            const user = await axios.post("/auth/newuser/signup", formdata,{withCredentials:true})
-            if (user.data.success) {
-                navigate("/")
-            } else if (user.data.message) {
-                toast.error(`${user.data.message[0]} is already taken try another one`, toastoptions)
-            } else {
-                toast.error(user.data.error, toastoptions)
-            }
+            Signupapi(formdata,(status) => {
+                if (status.success) {
+                    navigate("/")
+                } else if (status.message) {
+                    toast.error(`${status.message[0]} is already taken try another one`, toastoptions)
+                } else {
+                    toast.error(status.error, toastoptions)
+                }
+            })
         }
     }
 
@@ -221,20 +206,13 @@ function Login() {
     const handlesubmit = async (event) => {
         event.preventDefault()
         if (handlevalidation()) {
-         try{
-            axios.defaults.withCredentials = true;
-        const user = await axios.post("/auth/login", formdata,{withCredentials:true})
-         if(user.data.success){
-            
-            navigate("/home")
-         }else{
-            toast.error(user.data.error,toastoptions)
-         }
-         }catch(err){
-            console.log(err);
-            toast.error("Network issue Check your internet Connection",toastoptions)
-         }
-         
+             Loginapi(formdata,(status) => {
+                 if(status.success){
+                     navigate("/home")
+                    }else{
+                        toast.error(status.error,toastoptions)
+                    }
+                })
         }
     }
 

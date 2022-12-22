@@ -29,7 +29,6 @@ function CropEasy({ photoURL ,openCrop,setOpenCrop,setImage}) {
             image:url,
             file:file
           })
-          console.log(file)
           setOpenCrop(false)
        }catch(err){
           setAlert({isAlert:true,severity:"error",message:err.message,timeout:5000,location:"modal"})
@@ -43,13 +42,14 @@ function CropEasy({ photoURL ,openCrop,setOpenCrop,setImage}) {
             overlayBlur={3}
             size="50%"
             opened={openCrop}
+            onClose={() => setOpenCrop(false)}
             >
             <DialogContent dividers
                 sx={{
                     background: "#333",
                     position: "relative",
                     height:400,
-                    width: "auto",
+                    width:400,
                     minWidth: { sm: 500 }
                 }}
                 >
@@ -58,7 +58,6 @@ function CropEasy({ photoURL ,openCrop,setOpenCrop,setImage}) {
                     crop={crop}
                     zoom={zoom}
                     rotation={rotation}
-                    aspect={1}
                     onZoomChange={setZoom}
                     onRotationChange={setRotation}
                     onCropChange={setCrop}
@@ -66,15 +65,15 @@ function CropEasy({ photoURL ,openCrop,setOpenCrop,setImage}) {
                     />
             </DialogContent>
             <DialogActions sx={{flexDirection: "column",mx: 3,my: 2}}>
-                <Box sx={{width: "100%",mb: 1}}>
+                <Box sx={{width: "100%",mb:1}}>
                   <Box>
                      <Typography>Zoom : {zoomPercent(zoom)}</Typography>
                      <Slider
                      valueLabelDisplay='auto' 
                      valueLabelFormat={zoomPercent}
                      min={1}
-                     max={3}
-                     step={2}
+                     max={2}
+                     step={0.1}
                      value={zoom}
                      onChange={(e,zoom) => setZoom(zoom)}
                       />
@@ -84,10 +83,17 @@ function CropEasy({ photoURL ,openCrop,setOpenCrop,setImage}) {
                      <Typography>Roatation : {rotation}</Typography>
                      <Slider
                      valueLabelDisplay='auto' 
-                     min={-180}
+                     min={0}
                      max={180}
                      value={rotation}
-                     onChange={(e,rotation) => setRotation(rotation)}
+                     onChange={() => {
+                        console.log(rotation)
+                        if(rotation === 180){
+                            setRotation(0)
+                        }else if(rotation === 0){
+                            setRotation(180)
+                        }
+                     }}
                       />
                   </Box>
                 </Box>
@@ -115,6 +121,8 @@ function CropEasy({ photoURL ,openCrop,setOpenCrop,setImage}) {
                     >
                         Save
                     </Button>
+
+                    
                 </Box>
             </DialogActions>
             </Modal>

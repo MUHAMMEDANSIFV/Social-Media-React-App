@@ -1,12 +1,12 @@
-.Loder{
+.loder{
     height: 95vh;
 }
-.Loder > div{
+.loder > div{
     display: flex;
     align-items: center;
     justify-content: center;
 }
-.Loder > span {
+.loder > span {
     display: flex;
     justify-content: center;
     align-items: center;
