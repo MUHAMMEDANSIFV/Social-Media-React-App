@@ -11,31 +11,18 @@ const PostSchema = mongoose.Schema(
             likes:[
                 {
                     user:{
-                        type:Schema.Types.ObjectId,ref:"user"
+                        type:Schema.Types.ObjectId,
+                        ref:"user"
                     },
-                    likedAt:Date
+                    likedAt:{
+                        type:Date,
+                        default:Date.now()
+                    }
                 }
             ],
-            comments:[
-                {
-                    user:String,
-                    comment:[
-                        {
-                         commentlikes:[
-                            {
-                                user:String
-                            }
-                         ],
-                         commentreplay:[
-                            {
-                                user:String,
-                                replay:String
-                            }
-                         ]
-                        }
-                    ]
-                }
-            ],
+            comments:{
+                type:Schema.Types.ObjectId , ref:"comment"
+            },
             shares:[
                 {
                     sharefrom:String,

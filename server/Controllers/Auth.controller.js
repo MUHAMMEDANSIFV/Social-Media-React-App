@@ -122,7 +122,7 @@ export const verifytokens = (req,res,next) => {
             if(message == "jwt expired"){
                res.status(401).json({status:"jwt expired"})
             }else{
-               res.json({status:"jwt is not valid"})
+               res.status(401).json({error:"jwt is not valid"})
             }
          }else{
             req.userinfo = done
@@ -130,7 +130,7 @@ export const verifytokens = (req,res,next) => {
          }
        })
      }else{
-      res.json({status:"jwt is not found"})
+      res.json({error:"jwt is not valid"})
      }
 
      }catch(err){

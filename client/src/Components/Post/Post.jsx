@@ -10,24 +10,23 @@ import MenuItem from '@mui/material/MenuItem';
 import Menu from  '@mui/material/Menu';
 import axios from '../../Api/Axios.instence.js'
 import {useSelector,useDispatch} from "react-redux"
-import swal  from "sweetalert"
+import {likepost} from "../../Api/Post.Api.js"
+import swal  from "sweetalert";
 
 function Post({data,id}) {
 
   const [moreoptions,setMoreoptions] = useState(false);
   const [Liked,setLiked] = useState(false);
+  const [likescount,setLikesCount] = useState(data.likes.length);
   const User = useSelector((state) => {
     return state.user;
   })
 
   useEffect(() => {
-   const likesfind =  data.likes.find((user) => User._id === user.user)
-   if(likesfind){
-    setLiked(true)
-   }else{
-    setLiked(false)
-   }
-  },[Liked]);
+   const likesfind =  data.likes.find((obj) => User._id == obj.user)
+    if(likesfind) setLiked(true)
+    else setLiked(false)
+  },[]);
 
   const dispatch = useDispatch()
 
@@ -56,7 +55,7 @@ function Post({data,id}) {
           userid:User._id,
           postimage:data.postid
         }
-        const response = await axios.post("/user/delete-post",formdata,{ withCredentials: true })
+        const response = await axios.post("/post/delete-post",formdata,{ withCredentials: true })
         setMoreoptions(false)
         console.log(response)
         if(response.success){
@@ -74,8 +73,18 @@ function Post({data,id}) {
     });
   }
 
-  const postlike = (event) => {
-     
+  const postlike = (id) => {
+    setLikesCount(Liked ? likescount - 1 : likescount + 1)
+    setLiked(!Liked)
+     likepost({postid:id},(response) => {
+      console.log(response)
+      if(response.success){
+       dispatch({
+        type:"posts",
+        payload:response.posts
+       })
+      }
+     })
   }
 
   return (
@@ -112,12 +121,12 @@ function Post({data,id}) {
         <img src={data.posturl} alt="" />
 
         <div className="PostReact">
-          <img src={NotLike} alt=""
-          onClick={(e) => postlike(e)} />
+          <img src={Liked ? Heart : NotLike} alt=""
+          onClick={(e) => postlike(data._id)} />
           <img src={Comment} alt="" />
           <img src={Share} alt="" />
         </div>
-        <span style={{color: "var(--gray)",fontSize:'12px'}}>{data.likes ? data.likes.length : 0} Likes</span>
+        <span style={{color: "var(--gray)",fontSize:'12px'}}>{likescount} Likes</span>
 
         <div className='detail'>
             <span><b>{data.user.username} </b></span>

@@ -33,7 +33,7 @@ export const fileupload = async (req,res,next) => {
         const file = req.files.post[0]
         console.log(file)
         if(file){
-          const result = await cloudinary.uploader.upload(file.tempFilePath,{
+          const result = await cloudinary.uploader.upload(file.mv,{
             public_id:Date.now(),
             folder:"Socia-media/Posts"
           })
@@ -76,20 +76,55 @@ export const deletepost = async (req,res) => {
   }
 }
 
-export const postlike = (req,res) => {
+export const postlike = async (req,res) => {
    try{
-     const userid = req.userinfo
-     const postid = req.body.postid
+    
+    const userid = req.userinfo._id
+    const postid = req.body.postid
+    let status;
 
-    Userschema.updateOne({_id:userid},{
-      $push:{
-        likedpost:postid
+    const posts = await PostSchema.findById(postid)
+    console.log(posts)
+    const check_like_status = posts.likes.find(obj => obj.user == userid)
+    console.log(check_like_status);
+    if(check_like_status){
+     status = dislikepost()
+    }else{
+     status = likepost()
+    }
+
+    async function likepost(){
+      const like = await PostSchema.findByIdAndUpdate(postid,{
+        $push:{
+          likes:{
+            user:userid
+          }
+        }
+      })
+    if(like) return "liked"
+    else return false
+   }
+
+   async function dislikepost() {
+    const dislike = await PostSchema.findByIdAndUpdate(postid,{
+      $pull:{
+        likes:{
+          user:userid
+        }
       }
-    },(error,done) => {
-      if(error) console.log(error)
-      res.json({success:"Post liked"})
     })
-   }catch(err) {
+    if(dislike) return "disliked"
+    else return false
+ }
 
+   if(status){
+    const posts = await PostSchema.find().populate("user").sort({createdAt:-1})
+    res.status(200).json({success:true,posts:posts})
+   }else{
+    res.status(304).json({error:"Like is Not updated please try again"})
+   }
+
+   }catch(err) {
+    res.status(500).json({message:err.message})
    }
 }

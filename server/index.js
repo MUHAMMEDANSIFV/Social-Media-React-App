@@ -20,11 +20,12 @@ dotenv.config()
 
 import  AuthRouter  from "./routes/AuthRouter.js"
 import UserRouter from "./routes/user.js"
+import PostRouter from "./routes/PostRouter.js"
+import ChatRouter from "./routes/Chat.Router.js"
 
 app.use(express.json())
 app.use(bodyParser({extends:true}))
 app.use(fileUpload({
-    useTempFiles:true,
     limits:{
         fileSize: 10 * 100 * 1000 * 5
     }
@@ -50,6 +51,8 @@ app.listen(process.env.PORT,() => {
 
 app.use("/auth",AuthRouter)
 app.use("/user",UserRouter)
+app.use("/post",PostRouter)
+app.use("/chat",ChatRouter)
 
 
 

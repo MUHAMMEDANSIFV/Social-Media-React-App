@@ -1,5 +1,5 @@
 import React from 'react'
-import {useNavigate} from "react-router-dom"
+import {useNavigate,Navigate} from "react-router-dom"
 import "./SideBar.css"
 import axios from '../../Api/Axios.instence'
 
@@ -16,6 +16,7 @@ function SideBar() {
      }
 
   }
+
   return (
     <div className='SideBar'>
 
@@ -28,7 +29,7 @@ function SideBar() {
                     </div>
                 </div>
 
-                <div className="option">
+                <div className="option" onClick={() => navigate("/chat")}>
                     <div>
                     <i className="fa-solid fa-message"></i>
                     </div>

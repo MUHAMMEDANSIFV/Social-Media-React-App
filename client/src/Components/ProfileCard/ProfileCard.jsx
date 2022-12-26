@@ -32,12 +32,12 @@ function ProfileCard({ProfilePage}) {
                 <hr />
                 <div>
                     <div className="Follow">
-                        <span>{User ? User.followers : 0}</span>
+                        <span>{User.followers ? User.followers.length : 0}</span>
                         <span>Followers</span>
                     </div>
                     <div className="vl"></div>
                     <div className="Follow">
-                        <span>{User ? User.following : 0}</span>
+                        <span>{User.following ? User.following.length : 0}</span>
                         <span>Following</span>
                     </div>
                     {

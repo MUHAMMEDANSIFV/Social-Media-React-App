@@ -8,7 +8,9 @@ const instance = axios.create({
 
 instance.interceptors.response.use(response => response.data,async (error) => {
   const originalRequest = error.config;
-  if(error.response.status === 401){
+  if(error.response.status === 401 && error.response.data.error === "jwt is not valid"){
+    await axios.get("/auth/Logout",{withCredentials:true})
+  }else if(error.response.status === 401){
     try{
       originalRequest._retry = true
       const refreshtoken =  await instance.get("/auth/refreshtoken",{withCredentials:true})

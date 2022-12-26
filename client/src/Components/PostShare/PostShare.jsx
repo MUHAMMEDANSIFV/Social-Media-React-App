@@ -2,32 +2,30 @@ import React, { Fragment,useState,useRef} from 'react'
 import ProfileImage from "../../img/profileImg.jpg"
 import {toast,ToastContainer} from "react-toastify"
 import "./PostShare.css"
-import {useDispatch} from "react-redux"
 import {UilScenery,UilPlayCircle,UilLocationPoint,UilSchedule,UilTimes} from "@iconscout/react-unicons"
 import swal from "sweetalert"
 import Formdata from "form-data"
 import axios from "../../Api/Axios.instence"
 import CropEasy from '../Crop/CropEasy'
 import LinearBuffer from '../Loder/LinearLoader/LinearBuffer'
+import CircularIndeterminate from '../Loder/CircularIndeterminate/CircularIndeterminate'
 
 
 function PostShare() {
 
-    const dispatch = useDispatch()
-
-    const [Image,setImage] = useState(null)
+    const [image,setImage] = useState(null)
     const [photoURL,setPhotoURL] = useState(null)
     const [openCrop,setOpenCrop] = useState(false) 
     const [Loader,setLoader] = useState(false)
-    const [postdata,setpostdata] = useState({description: "Description Not Added"}) 
-    const ImageRef = useRef()
+    const [postdata,setPostdata] = useState({description: "Description Not Added"}) 
+    const imageRef = useRef()
     const formdata =new Formdata()
 
     const onImagechange = (event) => {
         if(event.target.files && event.target.files[0]){
             console.log(event.target.files[0].size)
-            let image = event.target.files[0]
-            setPhotoURL(URL.createObjectURL(image))
+            let imageurl = event.target.files[0]
+            setPhotoURL(URL.createObjectURL(imageurl))
             setOpenCrop(true)
 
     }}
@@ -40,7 +38,7 @@ function PostShare() {
           }
 
     const handleChange = (event) => {
-       setpostdata({...formdata,[event.target.name]:event.target.value})
+       setPostdata({...formdata,[event.target.name]:event.target.value})
     }
 
     const recall = () => {
@@ -49,28 +47,23 @@ function PostShare() {
 
     const handlesubmit = async () => { 
         try{
-        if(!Image.file){
+        if(!image.file){
             swal("Please add a Content ", {
                 buttons:  "Ok",
               });
         }else{
             setLoader(true)
-            formdata.append("post",Image.file)
+            formdata.append("post",image.file)
             formdata.append("description",postdata.description ? postdata.description : {description:"Description Not Added"})
-        const response = await axios.post("/user/sharepost",formdata,{headers: {
-            'x-device-id': 'stuff',
+            setImage(null)
+        const response = await axios.post("/post/sharepost",formdata,{headers: {
             'Content-Type': 'multipart/form-data'
           }})
           if(response.success){
-            toast.success(response.success,toastoptions)
             setImage(null)
             setPhotoURL(null)
-            setpostdata(null)
-            dispatch({
-                type:"posts",
-                payload:response.posts
-               })
-            setLoader("success")
+            setPostdata(null)
+            setLoader({status:"success",response:response})
         }else if(response.error === "file not found"){
         recall()
         }else{
@@ -92,7 +85,7 @@ function PostShare() {
                  name='description'
                  onChange={(e) => handleChange(e)}  />
             <div className='PostOptions'>
-                <div className="option" onClick={()=>ImageRef.current.click()}>
+                <div className="option" onClick={()=>imageRef.current.click()}>
                     <UilScenery />
                     Photo
                 </div>
@@ -110,24 +103,31 @@ function PostShare() {
                 </div>
                 <button onClick={handlesubmit} className='button post-button'>Post</button>
                 <div style={{display:"none"}}>
-                    <input type="file" name='post' ref={ImageRef} onChange={onImagechange} />
+                    <input type="file" name='post' ref={imageRef} onChange={onImagechange} />
                 </div>
             </div>
             {
-                Image && 
+                image ?
                 <div className="PreviewImage">
                    <UilTimes onClick={()=>setImage(null)} />
-                   <img src={Image.image} alt="" />
-                </div>
-            }
-            {
-             Loader ?
-             <LinearBuffer Loader={Loader} setLoader={setLoader} />
-             : ""
+                   <img src={image.image} alt="" />
+                </div> :
+                ""
             }
             </div>
             </div> 
             <CropEasy photoURL={photoURL} openCrop={openCrop} setOpenCrop={setOpenCrop} setImage={setImage} />
+             <div>
+             {
+             Loader ?
+             <div className='PostShareing'>
+             <div><b>Post Sharing Please Wait......</b></div>
+             <div><LinearBuffer Loader={Loader} setLoader={setLoader} /></div>
+             <div><div style={{display:"flex",fontSize:"1rem",}}>Pending  <CircularIndeterminate  style={{size:"2rem"}} /></div></div>
+             </div>
+             : ""
+             }
+             </div>
             <ToastContainer />
         </Fragment>
     )

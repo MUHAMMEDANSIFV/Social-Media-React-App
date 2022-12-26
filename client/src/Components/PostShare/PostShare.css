@@ -79,3 +79,15 @@
     object-fit: cover;
     border-radius: 0.5rem;
 }
+
+.PostShareing{
+    gap: 1rem;
+    background-color: var(--cardColor);
+    padding: 1rem;
+    border-radius: 1rem;
+}
+
+.PostShareing > div {
+    margin: 20px;
+    color: var(--greay);
+}

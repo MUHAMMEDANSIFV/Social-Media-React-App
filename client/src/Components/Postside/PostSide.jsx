@@ -5,7 +5,6 @@ import "./PostSide.css"
 import {useDispatch,useSelector} from "react-redux"
 import Loder from '../Loder/Loder'
 import axios from "../../Api/Axios.instence.js"
-axios.defaults.withCredentials = true
 
 
 function PostSide() {
@@ -19,7 +18,7 @@ function PostSide() {
   useEffect(()=>{
     const PostsApi = async () => {
       try{
-      const response = await axios.get("/user/all-posts")
+      const response = await axios.get("/post/all-posts")
       console.log(response)
       dispatch({
         type:"posts",

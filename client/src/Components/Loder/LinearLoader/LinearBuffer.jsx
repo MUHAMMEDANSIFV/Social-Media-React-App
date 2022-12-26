@@ -1,20 +1,36 @@
 import  React,{useRef,useState,useEffect, Fragment} from 'react';
 import Box from '@mui/material/Box';
 import LinearProgress from '@mui/material/LinearProgress';
+import {useDispatch} from "react-redux"
+import {ToastContainer,toast} from "react-toastify"
 
   function LinearBuffer({Loader,setLoader}) {
   const [progress, setProgress] = useState(0);
   const [buffer, setBuffer] = useState(10);
   const [Color,setColor] = useState("primary")
 
+  const dispatch = useDispatch()
+
+  const toastoptions = {
+    position: "bottom-left",
+    autoClose: 5000,
+    pauseOnHover: true,
+    draggable: true
+      }
+
   const progressRef = useRef(() => {});
   useEffect(() => {
     progressRef.current = () => {
       if (progress >= 100) {
-          if(Loader === "success"){
+          if(Loader.status){
             setColor("success")
+            toast.success("Post updated seccessfully complited",toastoptions)
             setTimeout(() => {
                setLoader(false)
+               dispatch({
+                type:"posts",
+                payload:Loader.response.posts
+               })
             }, 2000);
           }
       } else {
@@ -41,6 +57,7 @@ import LinearProgress from '@mui/material/LinearProgress';
     <Box sx={{ width: '100%' }}>
       <LinearProgress variant="buffer" color={Color} value={progress} valueBuffer={buffer} />
     </Box> 
+    <ToastContainer />
     </Fragment>
   );
 }
