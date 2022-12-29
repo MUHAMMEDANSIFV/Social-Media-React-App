@@ -4,6 +4,7 @@
     display: flex;
     justify-content: space-between;
     height: auto;
+    margin: 0;
 }
 
 .navIcons > img {

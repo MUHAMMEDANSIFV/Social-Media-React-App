@@ -1,23 +1,24 @@
-import React,{useState,useEffect} from 'react'
+import React,{useEffect, Fragment} from 'react'
 import Conversation from '../../Components/Conversation/Conversation';
 import {allchatster} from "../../Api/Chat.Api.js"
-import SearchBox from '../../Components/SearchBox/SearchBox'
 import './Chat.css'
+import NavBar from '../../Components/NavBar/NavBar';
 
 function Chat() {
 
-  const [chats,setChats] = useState([]);
+//   const [chats,setChats] = useState([]);
 
   useEffect(() => {
      allchatster((response) => {
-      if(response.success) setChats(response.chatsteres)
+     // if(response.success) setChats(response.chatsteres)
      })
   }, []);
 
   return (
+   <Fragment>
+      <NavBar />
     <div className="Chat">
         <div className="Left-side-chat">
-            <SearchBox />
             <div className="Chat-container">
             <h2>Chats</h2>
              <div className="Chat-list">
@@ -35,6 +36,7 @@ function Chat() {
                Right side
         </div>
     </div>
+   </Fragment>
   )
 }
 

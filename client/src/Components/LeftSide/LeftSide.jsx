@@ -6,7 +6,6 @@ import SideBar from '../SideBar/SideBar'
 function LeftSide() {
   return (
     <div className='LeftSide'>
-      <SearchBox />
       <SideBar />
     </div>
   )
