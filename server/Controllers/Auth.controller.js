@@ -49,7 +49,7 @@ export const Login = async (req,res) => {
           const accessToken = jwt.sign(data,process.env.ACCESS_TOKEN_SECRET_KEY,{expiresIn:"1m"})
           const refreshtoken = jwt.sign(data,process.env.REFRESH_TOKEN_SECRET_KEY,{expiresIn:"1d"})
           var time = Date.now()
-          var expireTime = time + 1000*36000;
+
 
           res.cookie('refreshtoken', refreshtoken, {
             sameSite: 'strict',
@@ -70,7 +70,11 @@ export const Login = async (req,res) => {
        }else{
         res. json({error:"No user found please Singup"})
        }
-
+      await userSchema.findOneAndUpdate({username:username},{
+         $set:{
+            presence:true
+         }
+      })
      }catch (err){
       console.log(err)
         res.json({error:"Some technical Problem Please try after some time we will fix it"})
@@ -138,9 +142,18 @@ export const verifytokens = (req,res,next) => {
      }
 }
 
-export const Logout = (req,res) => {
+export const Logout =async (req,res) => {
    try{
      res.clearCookie("accesstoken").clearCookie("refreshtoken").json({success:"cookie cleraed"})
+
+     const userid = req.userinfo._id;
+
+     await userSchema.findOneAndUpdate({_id:userid},{
+      $set:{
+         lastSeenAt:Date(Date.now()),
+         presence:false
+      }
+   })
 
    }catch(err){
 

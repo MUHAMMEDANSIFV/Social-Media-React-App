@@ -45,7 +45,7 @@ function ProfileCard({ProfilePage}) {
                         <>
                             <div className='vl'></div>
                             <div className='Follow'>
-                                <span>{User.posts ? User.posts : 0}</span>
+                                <span>{User.post ? User.post.length : 0}</span>
                                 <span>Posts</span>
                             </div>
                         </>

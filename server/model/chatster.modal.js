@@ -1,12 +1,11 @@
 import mongoose, { Schema } from "mongoose";
 
 const chatsterSchema = mongoose.Schema({
-    userid: [{
-        chatster: {
+    user:String,
+    chatsters:[{
+        personid: {
             type: Schema.Types.ObjectId, ref: "user"
         },
-        lastSeenAt: Date,
-        presence: Boolean,
         chatMessage: {
             type: Schema.Types.ObjectId, ref: "chatmessage"
         }

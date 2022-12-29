@@ -45,7 +45,9 @@ const userSchema = mongoose.Schema({
     ],
     profile:{
         type:Schema.Types.ObjectId , ref:"profile"
-    }
+    },
+    lastSeenAt: Date,
+    presence: Boolean,
 },{ timestamps: true })
 
 

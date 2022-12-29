@@ -10,7 +10,7 @@ import { Signup , Login ,refreshtoken , verifytokens ,Logout } from "../Controll
 
  router.get("/jwtveryfication", verifytokens,(req,res) =>{ res.status(200).json({success:"jwt is veryfied",user:req.userinfo})})
 
- router.get("/Logout",Logout)
+ router.get("/Logout",verifytokens,Logout)
 
 
 export default router;

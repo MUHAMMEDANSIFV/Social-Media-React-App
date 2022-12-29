@@ -5,6 +5,8 @@
     display: flex;
     flex-direction: column;
     font-size: 13px;
+    height: auto;
+    overflow: auto;
 }
 
 .Follower{

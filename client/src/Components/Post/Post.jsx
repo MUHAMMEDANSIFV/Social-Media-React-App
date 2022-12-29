@@ -90,6 +90,7 @@ function Post({data,id}) {
   return (
     <div className='Post' key={id}>
         <div className='post-more-options'>
+          <div>
             <IconButton
         aria-label="more"
         onClick={handleClick}
@@ -99,7 +100,6 @@ function Post({data,id}) {
         <MoreVertIcon />
 
         </IconButton>
-        
         <Menu 
         moreoptions={moreoptions} 
         keepMounted onClose={handleClose} 
@@ -117,6 +117,7 @@ function Post({data,id}) {
             delete
           </MenuItem>
       </Menu>
+      </div>
           </div>
         <img src={data.posturl} alt="" />
 

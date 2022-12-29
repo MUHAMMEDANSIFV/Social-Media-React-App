@@ -41,10 +41,6 @@ function PostShare() {
        setPostdata({...formdata,[event.target.name]:event.target.value})
     }
 
-    const recall = () => {
-        handlesubmit()
-    }
-
     const handlesubmit = async () => { 
         try{
         if(!image.file){
@@ -64,8 +60,6 @@ function PostShare() {
             setPhotoURL(null)
             setPostdata(null)
             setLoader({status:"success",response:response})
-        }else if(response.error === "file not found"){
-        recall()
         }else{
           toast.error(response.error,toastoptions)
         }}

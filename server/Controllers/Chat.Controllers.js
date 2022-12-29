@@ -15,3 +15,13 @@ export const allchatster = async (req,res) => {
 
     }
 }
+
+export const addnewchat = async (req,res) => {
+    try{
+
+     
+
+    }catch(err){
+
+    }
+}

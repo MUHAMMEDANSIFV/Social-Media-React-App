@@ -50,15 +50,15 @@ function EditprofileModel({ ModalOpened, setModalOpened }) {
             axios.defaults.withCredentials = true
             const response = await axios.post("/user/editprofile", formdata, { withCredentials: true })
             console.log(response.data)
-            if(response.data.success){
+            if(response.success){
             afterupdation()
             dispatch({
                 type:"user",
-                payload:response.data.user
+                payload:response.user
                })
             toast.success("Profile udpation successfully complited",toastoptions)
-            }else if(response.data.error){
-                setalertopen(response.data.error)
+            }else if(response.error){
+                setalertopen(response.error)
                 setTimeout(() => {
                      afterupdation()
                      setModalOpened(true)
@@ -80,7 +80,6 @@ function EditprofileModel({ ModalOpened, setModalOpened }) {
         else if (!/\S+@\S+\.\S+/.test(email) && !viewinput.email) setalertopen("please enter the correct email");
         else if (password === "") setalertopen("Password is required")
         else if (password.length < 10 ) setalertopen("Password must have at least 10 characters")
-        else if (confirmpassword !== password) setalertopen("Password and ConfirmPassword must be same")
         else{
             setalertopen(null)
             return true;
@@ -230,14 +229,6 @@ function EditprofileModel({ ModalOpened, setModalOpened }) {
                         value={formdata.password}
                         onChange={(e) => handlechange(e)}
                         name='password' />
-
-                    <input type="text"
-                        placeholder='Confirm Password'
-                        value={formdata.confirmpassword}
-                        onChange={(e) => handlechange(e)}
-                        className='infoinput'
-                        name='confirmpassword'
-                         />
                 </div>
                 <div>
                 </div>

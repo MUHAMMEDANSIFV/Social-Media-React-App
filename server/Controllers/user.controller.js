@@ -99,3 +99,14 @@ export const editpersonalinformation = (req,res) => {
         res.json({error:"Some tecnical error find"})
      }
 }
+
+export const getAllUser =async (req,res) => {
+    try{
+        
+      const alluser = await Userschema.find({}).limit(5)
+       console.log(alluser)
+      res.status(200).json({success:true,AllUser:alluser})
+    }catch(err){
+        res.status(500).json({error:err})
+    }
+}

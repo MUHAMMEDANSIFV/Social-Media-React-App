@@ -3,17 +3,19 @@ import dotenv  from "dotenv"
 import cors  from "cors"
 import connect from "./Connections/mongoos.connection.js"
 import cookieParser from "cookie-parser"
-import fileUpload from "express-fileupload"
-import cloudinary from "cloudinary"
+import cloudinary from "cloudinary" 
 import bodyParser from "body-parser"
+import "./Connections/Cloudinary.connection.js"
 
 
 dotenv.config();
+
 cloudinary.config({
     cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
     api_key: process.env.CLOUDINARY_API_KEY,
     api_secret:process.env.CLOUDINARY_API_SECRET_KEY
 })
+
 
 const app = express()
 dotenv.config()
@@ -25,21 +27,11 @@ import ChatRouter from "./routes/Chat.Router.js"
 
 app.use(express.json())
 app.use(bodyParser({extends:true}))
-app.use(fileUpload({
-    limits:{
-        fileSize: 10 * 100 * 1000 * 5
-    }
-}))
+
 app.use(cookieParser("dsafhaskdfjsdaklfjsklafjsdfgggsffgsdfddfgdgf"))
 
 app.use(cors({credentials:true,origin:"http://localhost:3000"}))
-// const oneDay = 1000*60*60*60*24 ;
-// app.use(session({
-//     secret:"sadfasdfsadfsdfasdfadsf",
-//     saveUninitialized:true,
-//     cookie:{maxAge:oneDay},
-//     resave:false
-// }))
+
 
 app.listen(process.env.PORT,() => {
     connect()

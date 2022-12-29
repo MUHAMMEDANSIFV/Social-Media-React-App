@@ -1,10 +1,10 @@
 import express from "express"
 const router = express.Router()
 import {verifytokens} from "../Controllers/Auth.controller.js"
-import { fileupload , sharepost , allposts , deletepost, postlike} from "../Controllers/post.controller.js"
+import { upload , sharepost , allposts , deletepost, postlike} from "../Controllers/post.controller.js"
 
 
-router.post("/sharepost",verifytokens,fileupload,sharepost)
+router.post("/sharepost",verifytokens,upload.single("post"),sharepost)
 
 router.get("/all-posts",verifytokens,allposts)
 

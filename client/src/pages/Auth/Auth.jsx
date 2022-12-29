@@ -47,14 +47,14 @@ function Auth() {
                         <h6>Explore the ideas throughout the world</h6>
                     </div>
                 </div>
-                {state ? <Login /> : <Signup />}
+                {state ? <Login /> : <Signup setstate={setstate} />}
             </div>
             }
         </Fragment>
     )
 }
 
-function Signup() {
+function Signup({setstate}) {
 
 
     const [formdata, setformdata] = useState({
@@ -81,7 +81,7 @@ function Signup() {
         if (handlevalidation()) {
             Signupapi(formdata,(status) => {
                 if (status.success) {
-                    navigate("/")
+                    setstate(true)
                 } else if (status.message) {
                     toast.error(`${status.message[0]} is already taken try another one`, toastoptions)
                 } else {

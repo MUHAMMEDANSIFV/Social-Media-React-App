@@ -1,10 +1,57 @@
 import PostSchema from "../model/poste.model.js"
-import cloudinary from "../Connections/Cloudinary.connection.js";
 import Userschema from "../model/user.model.js"
+import cloudinary from "cloudinary";
+import multer from "multer";
+import fs from "fs"
 
+if (!fs.existsSync("./uploads")) {
+  fs.mkdirSync("./uploads");
+}
+
+var storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+      cb(null, "./uploads");
+  },
+  filename: function (req, file, cb) {
+      cb(null, file.originalname);
+  },
+});
+
+export const upload = multer({ storage: storage });
+
+const uploadToCloudinary = async (localFilePath) => {
+    try{
+      
+     const mainFolderName = "main"
+
+     var filePathOnCloudinary = 
+       mainFolderName + "/" + localFilePath;
+
+         const result = await cloudinary.uploader.upload(localFilePath,{
+           public_id:filePathOnCloudinary
+         })
+         console.log(result)
+         if(result) return result;
+         else false
+    }catch(err){
+      console.log(err)
+       return err
+    }
+}
 export const sharepost = async (req, res) => {
     try{
-        const file = req.file;
+        let locaFilePath;
+       if(req.file){
+         locaFilePath = req.file.path;
+       }else{
+        console.log("file not found")
+        res.json({error:"file not found"})
+       }
+
+        const file = await uploadToCloudinary(locaFilePath)
+
+        if(file.public_id){
+
         console.log(req.body)
         const post = {
             user:req.userinfo._id,
@@ -22,32 +69,15 @@ export const sharepost = async (req, res) => {
        })
        const posts = await PostSchema.find().populate("user").sort({createdAt:-1})
        res.json({success:"Post uploading is successfully finished",posts:posts})
+      }else{
+        res.json({error:"file uploading is failed pelase try again"})
+      }
     }catch (err){
         console.log(err)
         res.json({error:"Some tecnical error find Over team will fix it soon",message:err})
     }
 }
 
-export const fileupload = async (req,res,next) => {
-     try{
-        const file = req.files.post[0]
-        console.log(file)
-        if(file){
-          const result = await cloudinary.uploader.upload(file.mv,{
-            public_id:Date.now(),
-            folder:"Socia-media/Posts"
-          })
-        req.file = result
-        next()
-        }else{
-            console.log("err")
-            res.json({error:"file not found"})
-        }
-     }catch(err){
-       console.log(err)
-        res.json({errro:"Some tecnical error find Over team will fix it soon"})
-     }
-}
 
 export const allposts = async (req,res) => {
     try{
@@ -72,7 +102,7 @@ export const deletepost = async (req,res) => {
      res.json({success:"deleted",posts:posts})
     }catch(err) {
       console.log(err)
-    res.json({error:"Some tecnical issue"})
+      res.json({error:"Some tecnical issue"})
   }
 }
 
