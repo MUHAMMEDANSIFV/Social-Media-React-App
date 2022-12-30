@@ -91,6 +91,7 @@ function Post({data,id}) {
     <div className='Post' key={id}>
         <div className='post-more-options'>
           <div>
+            
             <IconButton
         aria-label="more"
         onClick={handleClick}

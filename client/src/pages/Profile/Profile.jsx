@@ -8,8 +8,8 @@ import axios from '../../Api/Axios.instence'
 import {useDispatch} from "react-redux"
 import PostShare from '../../Components/PostShare/PostShare'
 import Posts from '../../Components/Posts/Posts'
-import { Loader } from '@mantine/core'
 import Loder from '../../Components/Loder/Loder'
+import NavBar from '../../Components/NavBar/NavBar'
 
 function Profile() {
 
@@ -45,6 +45,7 @@ function Profile() {
   )
   return (
     <Fragment>
+         <NavBar />
         <div className="Profile">
           <LeftSide />
         <div className="ProfileCenter">

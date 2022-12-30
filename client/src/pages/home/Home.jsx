@@ -1,48 +1,52 @@
 import axios from '../../Api/Axios.instence'
-import React, { useState , useEffect, Fragment } from 'react'
+import React, { useState, useEffect, Fragment } from 'react'
 import { useNavigate } from "react-router-dom"
 import LeftSide from '../../Components/LeftSide/LeftSide'
 import PostSide from '../../Components/Postside/PostSide'
 import RightSide from '../../Components/RightSide/RightSide'
+import NavBar from "../../Components/NavBar/NavBar"
 import './Home.css'
-import {useDispatch} from "react-redux"
+import { useDispatch } from "react-redux"
 import Loder from '../../Components/Loder/Loder'
 
 function Home() {
 
   const navigate = useNavigate()
-  const [Loading,setLoading] = useState(true)
+  const [Loading, setLoading] = useState(true)
   const dispatch = useDispatch()
 
   useEffect(() => {
-     jwtveryfication()
-     
+    jwtveryfication()
+
   })
 
-       const jwtveryfication = async () => {
-      const response = await axios.get("/user/home", { withCredentials: true })
-      if(response.success){
-       dispatch({
-        type:"user",
-        payload:response.user
-       })
-         setLoading(false)
-      }else{
-        navigate("/")
-      }
+  const jwtveryfication = async () => {
+    const response = await axios.get("/user/home", { withCredentials: true })
+    if (response.success) {
+      dispatch({
+        type: "user",
+        payload: response.user
+      })
+      setLoading(false)
+    } else {
+      navigate("/")
     }
-  if(Loading) return (
+  }
+  if (Loading) return (
     <div className='Home'>
-       <Loder />
+      <Loder />
     </div>
   )
   return (
     <Fragment>
-          <div className='Home'>
-            <LeftSide />
-            <PostSide />
-            <RightSide />
-          </div>
+      <div className="Nav">
+          <NavBar />
+      </div>
+      <div className='Home'>
+          <LeftSide />
+          <PostSide />
+          <RightSide />
+      </div>
     </Fragment>
   )
 }
