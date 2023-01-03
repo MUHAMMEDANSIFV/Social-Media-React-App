@@ -1,7 +1,6 @@
 {
   "name": "server",
   "version": "1.0.0",
-  "description": "",
   "main": "index.js",
   "type": "module",
   "scripts": {
@@ -27,5 +26,6 @@
     "node-schedule": "^2.1.0",
     "nodemon": "^2.0.20",
     "redis": "^4.5.1"
-  }
+  },
+  "description": ""
 }

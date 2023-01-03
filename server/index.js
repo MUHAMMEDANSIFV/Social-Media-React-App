@@ -20,6 +20,7 @@ cloudinary.config({
 const app = express()
 dotenv.config()
 
+
 import  AuthRouter  from "./routes/AuthRouter.js"
 import UserRouter from "./routes/user.js"
 import PostRouter from "./routes/PostRouter.js"
@@ -45,6 +46,3 @@ app.use("/auth",AuthRouter)
 app.use("/user",UserRouter)
 app.use("/post",PostRouter)
 app.use("/chat",ChatRouter)
-
-
-

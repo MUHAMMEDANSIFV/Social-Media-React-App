@@ -1,5 +1,4 @@
 import React,{useState,Fragment} from 'react'
-import {useNavigate} from "react-router-dom"
 import {ToastContainer,toast} from "react-toastify"
 import {Signup as Signupapi} from "../../Api/Auth.Api"
 import Otp from './Otp';
@@ -22,8 +21,6 @@ function Signup({setState,state}) {
         pauseOnHover: true,
         draggable: true
     }
-
-    const navigate = useNavigate()
 
 
     const handlesubmit = async (event) => {
