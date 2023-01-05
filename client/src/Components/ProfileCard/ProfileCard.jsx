@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import EditprofileModel from "../EditprofileModal/EditprofileModel";
 
-function ProfileCard({ ProfilePage }) {
+function ProfileCard({Postscount , ProfilePage }) {
      const [ModalOpened, setModalOpened] = useState(false);
 
      const User = useSelector((state) => {
@@ -53,7 +53,7 @@ function ProfileCard({ ProfilePage }) {
                                    <div className='vl'></div>
                                    <div className='Follow'>
                                         <span>
-                                             {User.post ? User.post.length : 0}
+                                             {Postscount ? Postscount : 0}
                                         </span>
                                         <span>Posts</span>
                                    </div>

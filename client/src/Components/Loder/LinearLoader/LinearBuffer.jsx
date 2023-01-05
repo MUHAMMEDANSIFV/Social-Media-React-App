@@ -28,7 +28,7 @@ import {ToastContainer,toast} from "react-toastify"
             setTimeout(() => {
                setLoader(false)
                dispatch({
-                type:"posts",
+                type:"posts-updated",
                 payload:Loader.response.posts
                })
             }, 2000);

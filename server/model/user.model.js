@@ -41,7 +41,6 @@ const userSchema = mongoose.Schema(
                     followerid: String,
                },
           ],
-          post: [{ type: Schema.Types.ObjectId, ref: "post" }],
           profile: {
                profileurl: {
                     type: String,

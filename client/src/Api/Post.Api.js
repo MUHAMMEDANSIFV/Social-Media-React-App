@@ -1,13 +1,26 @@
 import axios from "./Axios.instence.js";
 axios.defaults.withCredentials = true;
+const baseURL = "post"
 
-export const likepost =async (data,callback) => {
-   try{
+export const likepost = async (data, callback) => {
+     try {
+          const response = await axios.put(`/${baseURL}/post-like`, data, {
+               withCredentials: true,
+          });
+          callback(response);
+     } catch (err) {
+          callback(err);
+     }
+};
 
-     const response = await axios.put("/post/post-like",data,{withCredentials:true})
-     callback(response)
+export const userposts = async (callback) => {
+     try {
 
-   }catch(err) {
-    callback(err)
-   }
-}
+      const response = await axios.get(`/${baseURL}/get-user-posts`);
+
+      callback(response)
+
+     } catch (err) {
+      callback(err)
+     }
+};

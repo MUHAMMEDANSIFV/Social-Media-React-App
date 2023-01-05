@@ -48,40 +48,57 @@ function Login({state,setState}) {
         setformdata({ ...formdata, [event.target.name]: event.target.value })
     }
     return (
-        <Fragment>
+         <Fragment>
+              <div className='a-right'>
+                   <form
+                        onSubmit={(event) => handlesubmit(event)}
+                        className='infoForm auth-form'
+                   >
+                        <h2>Login</h2>
 
-            <div className="a-right">
-                <form onSubmit={(event) => handlesubmit(event)} className="infoForm auth-form">
+                        <div>
+                             <input
+                                  type='text'
+                                  placeholder='User Name'
+                                  className='infoinput'
+                                  value={formdata.username}
+                                  onChange={(event) => handlechange(event)}
+                                  name='username'
+                             />
 
-                    <h2>Login</h2>
+                             <input
+                                  type='password'
+                                  placeholder='Password'
+                                  className='infoinput'
+                                  value={formdata.password}
+                                  onChange={(event) => handlechange(event)}
+                                  name='password'
+                             />
+                        </div>
 
-                    <div>
-                        <input type="text"
-                            placeholder='User Name'
-                            className='infoinput'
-                            value={formdata.username}
-                            onChange={(event) => handlechange(event)}
-                            name='username'
-                        />
-                  
-                        <input type="password"
-                            placeholder='Password'
-                            className='infoinput'
-                            value={formdata.password}
-                            onChange={(event) => handlechange(event)}
-                            name='password'
-                        />
-
-                    </div>
-
-                    <div >
-                        <span style={{ fontSize: "12px" }}>If You dont't an account. <span className='link' onClick={()=> setState(!state)}>Signup</span></span>
-                    </div>
-                    <button className='button info-Button' type='submit'>Login</button>
-                </form>
-            </div>
-            <ToastContainer />
-        </Fragment>
-    )
+                        <div >
+                             <span className='link'>
+                                       Forgotten account?
+                             </span>
+                             </div>
+                             <div >
+                             <span style={{ fontSize: "12px" }}>
+                                  If You dont't an account.{" "}
+                                  <span
+                                       className='link'
+                                       onClick={() => setState(!state)}
+                                  >
+                                       Signup
+                                  </span>
+                             </span>
+                        </div>
+                        <button className='button info-Button' type='submit'>
+                             Login
+                        </button>
+                   </form>
+              </div>
+              <ToastContainer />
+         </Fragment>
+    );
 }
 export default Login

@@ -16,16 +16,15 @@ import swal  from "sweetalert";
 function Post({data,id}) {
 
   const [moreoptions,setMoreoptions] = useState(false);
-  const [Liked,setLiked] = useState(false);
-  const [likescount,setLikesCount] = useState(data.likes.length);
+  const [Liked,setLiked] = useState(null);
+  const [likescount,setLikesCount] = useState(null);
   const User = useSelector((state) => {
     return state.user;
   })
 
   useEffect(() => {
-   const likesfind =  data.likes.find((obj) => User._id == obj.user)
-    if(likesfind) setLiked(true)
-    else setLiked(false)
+    setLiked(data.liked)
+    setLikesCount(data.likescount)
   },[]);
 
   const dispatch = useDispatch()
@@ -131,7 +130,7 @@ function Post({data,id}) {
         <span style={{color: "var(--gray)",fontSize:'12px'}}>{likescount} Likes</span>
 
         <div className='detail'>
-            <span><b>{data.user.username} </b></span>
+            <span><b>{data.users.username} </b></span>
             <span>{data.discription}</span>
         </div>
     </div>

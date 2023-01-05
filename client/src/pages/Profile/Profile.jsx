@@ -10,30 +10,39 @@ import PostShare from '../../Components/PostShare/PostShare'
 import Posts from '../../Components/Posts/Posts'
 import Loder from '../../Components/Loder/Loder'
 import NavBar from '../../Components/NavBar/NavBar'
+import {userposts} from '../../Api/Post.Api.js'
 
 function Profile() {
 
   const navigate = useNavigate()
   const [Loading,setLoading] = useState(true)
   const [PostsList,setPostsList] = useState(true)
+  const [Postscount, setPostcount] = useState(null);
+
   const dispatch = useDispatch()
 
   useEffect(()=>{
      jwtveryfication()
-  })
+  },[])
 
   const jwtveryfication = async () => {
-     const response = await axios.get("/user/profile")
-     if(response.message){ 
-      dispatch({
-        type:"user",
-        payload:response.user
-       })
-       setPostsList(response.user.post)
-       setLoading(false)
-     }else{
-       navigate("/")
-     }
+      
+     userposts((response) =>{
+
+       if(response.success){ 
+
+         setPostsList(response.posts)
+         console.log(response)
+         setLoading(false)
+         setPostcount(response.posts.length)
+         dispatch({
+          type:"user",
+          payload:response.user
+         })
+        }else{
+          navigate("/")
+        }
+      })
   }
   if(Loading) return (
     <Fragment>
@@ -49,8 +58,8 @@ function Profile() {
         <div className="Profile">
           <LeftSide />
         <div className="ProfileCenter">
-            <ProfileCard ProfilePage={true}/>
-            <PostShare />
+            <ProfileCard Postscount={Postscount} ProfilePage={true}/>
+            <PostShare setPostcount={setPostcount} Postscount={Postscount} />
             <Posts PostsList={PostsList} />
         </div>
         <ProfileRight />

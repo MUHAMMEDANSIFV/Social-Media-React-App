@@ -1,6 +1,8 @@
 import Userschema from "../model/user.model.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import mongoose from "mongoose";
+
 
 export const home = async (req, res) => {
      try {
@@ -8,17 +10,6 @@ export const home = async (req, res) => {
      } catch (err) {}
 };
 
-export const profile = async (req, res) => {
-     try {
-          const id = req.userinfo._id;
-
-          const user = await Userschema.findById(id).populate("post");
-
-          res.status(200).json({ message: "success", user: user });
-     } catch (err) {
-          res.status(502).json({ error: err });
-     }
-};
 
 export const editprofile = async (req, res) => {
      try {

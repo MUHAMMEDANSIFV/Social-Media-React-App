@@ -39,7 +39,7 @@ function Signup({setState,state}) {
     }
 
     const handlevalidation = () => {
-        setOtpverify(true)
+
         const { firstname, lastname, username, email, password, confirmpassword } = formdata
         if (firstname.length === 0) toast.error("First Name is required", toastoptions)
         else if (firstname.length < 6) toast.error("First Name must have at least 6 characters", toastoptions)

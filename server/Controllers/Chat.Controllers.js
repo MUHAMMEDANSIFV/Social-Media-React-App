@@ -2,8 +2,8 @@ import ChatSterSchema from "../model/chatster.modal.js";
 
 export const allchatster = async (req, res) => {
      try {
-          console.log("hi")
-          const userid = "63aebe2789a9ae9dae9f0c91";
+          
+          const userid = req.userinfo._id;
           let chatsteres_list = await ChatSterSchema.findOne({
                user: userid,
           }).populate("chatsters.personid")
@@ -27,9 +27,6 @@ export const addnewchat = async (req, res) => {
 
      const userid = req.userinfo._id;
 
-        const chatexist =await  ChatSterSchema.findOne({user:userid})
-
-        if(chatexist){
           const chatster = await ChatSterSchema.findOneAndUpdate(
                { user: userid },
                {
@@ -38,18 +35,11 @@ export const addnewchat = async (req, res) => {
                               personid: req.body.chatster,
                          },
                     },
+               },
+               {
+                    upsert:true
                }
           );
-        }else{
-          const data = {
-               user: userid,
-               chatsters: {
-                    personid: req.body.chatster,
-               },
-          };
-          const chatster = await ChatSterSchema(data)
-          chatster.save()
-        }
         let chatsteres_list = await ChatSterSchema.findOne({
              user: userid,
         }).populate("chatsters.personid");

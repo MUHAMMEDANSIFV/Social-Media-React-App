@@ -3,6 +3,7 @@ import Userschema from "../model/user.model.js";
 import cloudinary from "cloudinary";
 import multer from "multer";
 import fs from "fs";
+import mongoose from "mongoose";
 
 if (!fs.existsSync("./uploads")) {
      fs.mkdirSync("./uploads");
@@ -59,14 +60,9 @@ export const sharepost = async (req, res) => {
 
                const post1 = await PostSchema(post);
                const response = await post1.save();
-               await Userschema.findByIdAndUpdate(req.userinfo._id, {
-                    $push: {
-                         post: response._id,
-                    },
-               });
-               const posts = await PostSchema.find()
-                    .populate("user")
-                    .sort({ createdAt: -1 });
+               
+               const posts = await find_all_post(req.userinfo._id) 
+
                res.json({
                     success: "Post uploading is successfully finished",
                     posts: posts,
@@ -85,15 +81,21 @@ export const sharepost = async (req, res) => {
 
 export const allposts = async (req, res) => {
      try {
-          const Posts = await PostSchema.find()
-               .populate("user")
-               .sort({ createdAt: -1 });
+          const userid = req.userinfo._id
+          
+           const Posts =await find_all_post(userid);
+
           res.json({ success: "Posts loading success", posts: Posts });
-     } catch (err) {}
+     } catch (err) {
+          console.log(err)
+     }
 };
 
 export const deletepost = async (req, res) => {
      try {
+         
+          const userid = req.userinfo._id
+
           const data = req.body;
           await cloudinary.uploader.destroy(data.postimage);
           await PostSchema.deleteOne({ _id: data.postid });
@@ -105,9 +107,8 @@ export const deletepost = async (req, res) => {
                     },
                }
           );
-          const posts = await PostSchema.find()
-               .populate("user")
-               .sort({ createdAt: -1 });
+          const posts = await find_all_post(userid)
+
           res.json({ success: "deleted", posts: posts });
      } catch (err) {
           console.log(err);
@@ -158,9 +159,8 @@ export const postlike = async (req, res) => {
           }
 
           if (status) {
-               const posts = await PostSchema.find()
-                    .populate("user")
-                    .sort({ createdAt: -1 });
+               const posts = await find_all_post(userid)
+
                res.status(200).json({ success: true, posts: posts });
           } else {
                res.status(304).json({
@@ -171,3 +171,109 @@ export const postlike = async (req, res) => {
           res.status(500).json({ message: err.message });
      }
 };
+
+export const userposts =async (req,res) => {
+    try{
+     console.log("hi")
+     const userid = req.userinfo._id
+
+       const Posts = await PostSchema.aggregate([
+          {
+             $match:{
+               user:mongoose.Types.ObjectId(userid)
+             }
+          },
+         {
+                 $addFields: {
+                      liked: {
+                           $cond: {
+                                if: {
+                                     $in: [
+                                          mongoose.Types.ObjectId(userid),
+                                          "$likes.user",
+                                     ],
+                                },
+                                then: true,
+                                else: false,
+                           },
+                      },
+                      likescount: {
+                           $size: "$likes",
+                      },
+                 },
+            },
+            {
+                 $sort: {
+                      createdAt: -1,
+                 },
+            },
+            {
+                 $lookup: {
+                      from: "users",
+                      localField: "user",
+                      foreignField: "_id",
+                      as: "users",
+                 },
+            },
+            {
+                 $unwind: "$users",
+            },
+       ]);
+    
+       const User =await Userschema.findById(userid)
+       console.log(User)
+
+       res.status(200).json({success:true,posts:Posts,user:User})
+
+    }catch(err){
+       console.log(err)
+       res.json({error:err})
+    }
+}
+
+
+async function find_all_post(userid) {
+    try{
+
+      const Posts = await PostSchema.aggregate([
+               {
+                    $addFields: {
+                         liked: {
+                              $cond: {
+                                   if: {
+                                        $in:[mongoose.Types.ObjectId(userid),"$likes.user"]
+                                   },
+                                   then: true,
+                                   else: false,
+                              },
+                         },
+                         likescount:{
+                              $size:"$likes"
+                         }
+                    },
+               },
+               {
+                    $sort: {
+                         createdAt: -1,
+                    },
+               },
+               {
+                    $lookup:{
+                         from:"users",
+                         localField:"user",
+                         foreignField:"_id",
+                         as:"users"
+                    }
+               },
+               {
+                    $unwind:"$users"
+               }
+          ])
+          console.log(Posts)
+          return Posts;
+
+    }catch(err){
+     console.log(err)
+     return err
+    }
+}

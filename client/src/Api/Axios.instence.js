@@ -24,7 +24,7 @@ instance.interceptors.response.use(
                     );
                     console.log(refreshtoken);
                     const result = await axios(originalRequest);
-                    return result;
+                    return result.data;
                } catch (err) {
                     await axios.get("/auth/Logout", { withCredentials: true });
                }

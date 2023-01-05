@@ -86,3 +86,18 @@
     display: flex;
     gap: 1rem;
 }
+
+.start-chat{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    font-size: 2rem;
+    padding-top: 35vh;
+    color: #1976d2;
+}
+
+.start-chat:hover{
+    color: #358ff9;
+    cursor: pointer;
+}
