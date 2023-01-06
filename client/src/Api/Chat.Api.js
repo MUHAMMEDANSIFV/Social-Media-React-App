@@ -1,25 +1,26 @@
-import axios from "./Axios.instence.js";
+import axios from './Axios.instence';
+
 axios.defaults.withCredentials = true;
-const baseurl = "chat";
+const baseurl = 'chat';
 
 export const allchatster = async (callback) => {
-     try {
-          const response = await axios.get(`/${baseurl}/allchatsters`);
-          callback(response);
-     } catch (err) {
-          callback(err);
-     }
+  try {
+    const response = await axios.get(`/${baseurl}/allchatsters`);
+    callback(response);
+  } catch (err) {
+    callback(err);
+  }
 };
 
 export const addnewchat = async (chatster, callback) => {
-     try {
-          const response = await axios.post(
-               `/${baseurl}/add-new-chat`,
-               chatster
-          );
+  try {
+    const response = await axios.post(
+      `/${baseurl}/add-new-chat`,
+      chatster,
+    );
 
-          callback(response);
-     } catch (err) {
-          callback(err);
-     }
+    callback(response);
+  } catch (err) {
+    callback(err);
+  }
 };

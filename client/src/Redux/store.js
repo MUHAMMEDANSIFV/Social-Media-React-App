@@ -1,16 +1,15 @@
-import { createStore } from "redux"
+/* eslint-disable default-param-last */
+import { createStore } from 'redux';
 
 const initiolvalue = {
-    user:null
-}
+  user: null,
+};
 
-const appReducer = (prevstate = initiolvalue,action) => {
-    return {
-      ...prevstate,
-      [action.type] :action.payload
-    }
-}
+const appReducer = (prevstate = initiolvalue, action) => ({
+  ...prevstate,
+  [action.type]: action.payload,
+});
 
-const store = createStore(appReducer)
+const store = createStore(appReducer);
 
 export default store;

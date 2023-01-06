@@ -1,46 +1,43 @@
-import React,{useState} from 'react';
-import { Modal, useMantineTheme  } from '@mantine/core';
-import {useSelector} from "react-redux"
-import {Alert} from "@mantine/core"
-import './ProfileModal.css'
+import React, { useState } from 'react';
+import { Modal, useMantineTheme, Alert } from '@mantine/core';
+import { useSelector } from 'react-redux';
+import './ProfileModal.css';
+import PropTypes from 'prop-types';
 
-function ProfileModal({ModalOpened,setModalOpened}) {
+function ProfileModal({ ModalOpened, setModalOpened }) {
   const theme = useMantineTheme();
 
-  const User = useSelector((state) => {
-    return state.user;
-  })
+  const User = useSelector((state) => state.user);
 
-  const [formdata,setformdata] = useState({
-    workat:User.workat,
-    livesin:User.livesin,
-    status:User.status,
-    password:"",
-    confirmpassword:""
-  })
+  const [formdata, setformdata] = useState({
+    workat: User.workat,
+    livesin: User.livesin,
+    status: User.status,
+    password: '',
+    confirmpassword: '',
+  });
 
-  const [alertopen,setalertopen] = useState("")
+  const [alertopen, setalertopen] = useState('');
+  const handlevalidation = () => {
+    const { workat, livesin, status } = formdata;
+
+    if (workat === '') setalertopen('Work At filed is requried');
+    else if (livesin === '') setalertopen('Lives In filed is requried');
+    else if (status === '') setalertopen('Status filed is required');
+    else return false;
+    return true;
+  };
 
   const handlesubmit = (e) => {
-    e.preventDefault()
-    if(handlevalidation()){
-
+    e.preventDefault();
+    if (handlevalidation()) {
+      console.log('success');
     }
-  }
-
-  const handlevalidation = () => {
-      const {workat , livesin , status} = formdata
-
-      if(workat === "") setalertopen("Work At filed is requried")
-      else if(livesin === "") setalertopen("Lives In filed is requried")
-      else if(status === "") setalertopen("Status filed is required")
-      else return false
-      return true
-  }
+  };
 
   const handlechange = (e) => {
-    setformdata({...formdata,[e.target.name]:e.target.value})
-  }
+    setformdata({ ...formdata, [e.target.name]: e.target.value });
+  };
 
   return (
     <Modal
@@ -48,79 +45,88 @@ function ProfileModal({ModalOpened,setModalOpened}) {
       overlayOpacity={0.55}
       overlayBlur={3}
       size="50%"
-      opened = {ModalOpened}
-      onClose = {()=>{
-        setModalOpened(false)
+      opened={ModalOpened}
+      onClose={() => {
+        setModalOpened(false);
         setformdata({
-    workat:User.workat,
-    livesin:User.livesin,
-    status:User.status,
-    password:"",
-    confirmpassword:""
-  })
+          workat: User.workat,
+          livesin: User.livesin,
+          status: User.status,
+          password: '',
+          confirmpassword: '',
+        });
       }}
     >
-      <form className='infoForm'>
+      <form className="infoForm">
         <h3>Your info</h3>
-     
-        { alertopen && <Alert  style={{height:"50px"}} title="error" color="red">{alertopen}</Alert> }
+
+        { alertopen && <Alert style={{ height: '50px' }} title="error" color="red">{alertopen}</Alert> }
 
         <div>
-                    <input type="text"
-                        placeholder='Work at'
-                        className='infoinput'
-                        name='workat' 
-                        value={formdata.workat}
-                        onChange={(e) => handlechange(e)}
-                        />
-                </div>
+          <input
+            type="text"
+            placeholder="Work at"
+            className="infoinput"
+            name="workat"
+            value={formdata.workat}
+            onChange={(e) => handlechange(e)}
+          />
+        </div>
 
-                <div>
-                    <input type="text"
-                        placeholder='Lives In'
-                        className='infoinput'
-                        name='livesin'
-                        value={formdata.livesin}
-                        onChange={(e) => handlechange(e)}
-                        />
-                </div>
+        <div>
+          <input
+            type="text"
+            placeholder="Lives In"
+            className="infoinput"
+            name="livesin"
+            value={formdata.livesin}
+            onChange={(e) => handlechange(e)}
+          />
+        </div>
 
-                <div>
-                    <input type="text"
-                        placeholder='Status'
-                        className='infoinput'
-                        name='status' 
-                        value={formdata.status}
-                        onChange={(e) => handlechange(e)}
-                        />
-                </div>
+        <div>
+          <input
+            type="text"
+            placeholder="Status"
+            className="infoinput"
+            name="status"
+            value={formdata.status}
+            onChange={(e) => handlechange(e)}
+          />
+        </div>
 
-                <div>
-                    <input type="password"
-                        placeholder='Password'
-                        className='infoinput'
-                        name='password'
-                        value={formdata.password}
-                        onChange={(e) => handlechange(e)}
-                         />
+        <div>
+          <input
+            type="password"
+            placeholder="Password"
+            className="infoinput"
+            name="password"
+            value={formdata.password}
+            onChange={(e) => handlechange(e)}
+          />
 
-                    <input type="password"
-                        placeholder='Confirm Password'
-                        className='infoinput'
-                        name='confirmpassword'
-                        value={formdata.confimpassword}
-                        onChange={(e) => handlechange(e)}
-                         />
-                </div>
-                <div>
-                </div>
+          <input
+            type="password"
+            placeholder="Confirm Password"
+            className="infoinput"
+            name="confirmpassword"
+            value={formdata.confimpassword}
+            onChange={(e) => handlechange(e)}
+          />
+        </div>
+        <div />
 
-                <div>
-                    <button onClick={(e) => handlesubmit(e)} className='button info-Button'>Update Details</button>
-                </div>
+        <div>
+          <button type="submit" onClick={(e) => handlesubmit(e)} className="button info-Button">Update Details</button>
+        </div>
       </form>
     </Modal>
   );
 }
+
+ProfileModal.propTypes = {
+  ModalOpened: PropTypes.string.isRequired,
+  setModalOpened: PropTypes.string.isRequired,
+};
 
 export default ProfileModal;

@@ -1,38 +1,39 @@
-import  React,{useRef,useState,useEffect, Fragment} from 'react';
+/* eslint-disable react/prop-types */
+import React, { useRef, useState, useEffect } from 'react';
 import Box from '@mui/material/Box';
 import LinearProgress from '@mui/material/LinearProgress';
-import {useDispatch} from "react-redux"
-import {ToastContainer,toast} from "react-toastify"
+import { useDispatch } from 'react-redux';
+import { ToastContainer, toast } from 'react-toastify';
 
-  function LinearBuffer({Loader,setLoader}) {
+function LinearBuffer({ Loader, setLoader }) {
   const [progress, setProgress] = useState(0);
   const [buffer, setBuffer] = useState(10);
-  const [Color,setColor] = useState("primary")
+  const [Color, setColor] = useState('primary');
 
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
 
   const toastoptions = {
-    position: "bottom-left",
+    position: 'bottom-left',
     autoClose: 5000,
     pauseOnHover: true,
-    draggable: true
-      }
+    draggable: true,
+  };
 
   const progressRef = useRef(() => {});
   useEffect(() => {
     progressRef.current = () => {
       if (progress >= 100) {
-          if(Loader.status){
-            setColor("success")
-            toast.success("Post updated seccessfully complited",toastoptions)
-            setTimeout(() => {
-               setLoader(false)
-               dispatch({
-                type:"posts-updated",
-                payload:Loader.response.posts
-               })
-            }, 2000);
-          }
+        if (Loader.status) {
+          setColor('success');
+          toast.success('Post updated seccessfully complited', toastoptions);
+          setTimeout(() => {
+            setLoader(false);
+            dispatch({
+              type: 'posts-updated',
+              payload: Loader.response.posts,
+            });
+          }, 2000);
+        }
       } else {
         const diff = Math.random() * 10;
         const diff2 = Math.random() * 10;
@@ -53,12 +54,17 @@ import {ToastContainer,toast} from "react-toastify"
   }, []);
 
   return (
-    <Fragment>
-    <Box sx={{ width: '100%' }}>
-      <LinearProgress variant="buffer" color={Color} value={progress} valueBuffer={buffer} />
-    </Box> 
-    <ToastContainer />
-    </Fragment>
+    <>
+      <Box sx={{ width: '100%' }}>
+        <LinearProgress
+          variant="buffer"
+          color={Color}
+          value={progress}
+          valueBuffer={buffer}
+        />
+      </Box>
+      <ToastContainer />
+    </>
   );
 }
 

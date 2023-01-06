@@ -13,8 +13,7 @@ import NotificationsIcon from '@mui/icons-material/Notifications';
 import MoreIcon from '@mui/icons-material/MoreVert';
 import SearchBox from '../SearchBox/SearchBox';
 
-
- function NavBar() {
+function NavBar() {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
 
@@ -114,7 +113,7 @@ import SearchBox from '../SearchBox/SearchBox';
 
   return (
     <Box sx={{ flexGrow: 1 }}>
-      <AppBar className='AppBar' position="static" >
+      <AppBar className="AppBar" position="static">
         <Toolbar>
           <IconButton
             size="large"
@@ -125,7 +124,7 @@ import SearchBox from '../SearchBox/SearchBox';
           >
             <MenuIcon />
           </IconButton>
-        
+
           <SearchBox />
           <Box sx={{ flexGrow: 1 }} />
           <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
@@ -175,4 +174,4 @@ import SearchBox from '../SearchBox/SearchBox';
   );
 }
 
-export default NavBar
+export default NavBar;

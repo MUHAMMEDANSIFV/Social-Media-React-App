@@ -1,140 +1,145 @@
-import React,{useState,useEffect} from 'react'
-import "./Post.css"
-import Comment from "../../img/comment.png"
-import Share from "../../img/share.png"
-import Heart from "../../img/like.png"
-import NotLike from "../../img/notlike.png"
+/* eslint-disable no-underscore-dangle */
+import React, { useState, useEffect } from 'react';
+import './Post.css';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
-import IconButton from '@mui/material/IconButton'
+import IconButton from '@mui/material/IconButton';
 import MenuItem from '@mui/material/MenuItem';
-import Menu from  '@mui/material/Menu';
-import axios from '../../Api/Axios.instence.js'
-import {useSelector,useDispatch} from "react-redux"
-import {likepost} from "../../Api/Post.Api.js"
-import swal  from "sweetalert";
+import Menu from '@mui/material/Menu';
+import { useSelector, useDispatch } from 'react-redux';
+import swal from 'sweetalert';
+import PropTypes from 'prop-types';
+import Comment from '../../img/comment.png';
+import Share from '../../img/share.png';
+import Heart from '../../img/like.png';
+import NotLike from '../../img/notlike.png';
+import axios from '../../Api/Axios.instence';
+import { likepost } from '../../Api/Post.Api';
 
-function Post({data,id}) {
-
-  const [moreoptions,setMoreoptions] = useState(false);
-  const [Liked,setLiked] = useState(null);
-  const [likescount,setLikesCount] = useState(null);
-  const User = useSelector((state) => {
-    return state.user;
-  })
+function Post({ data }) {
+  const [moreoptions, setMoreoptions] = useState(false);
+  const [Liked, setLiked] = useState(null);
+  const [likescount, setLikesCount] = useState(null);
+  const User = useSelector((state) => state.user);
 
   useEffect(() => {
-    setLiked(data.liked)
-    setLikesCount(data.likescount)
-  },[]);
+    setLiked(data.liked);
+    setLikesCount(data.likescount);
+  }, []);
 
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
 
-  const handleClick = (event  ) => {
+  const handleClick = (event) => {
     setMoreoptions(event.currentTarget);
-  }
+  };
 
   const handleClose = () => {
-    setMoreoptions(false)
-  }
+    setMoreoptions(false);
+  };
 
-  const open = Boolean(moreoptions)
+  const open = Boolean(moreoptions);
 
-  const handlesubmit = () =>{
+  const handlesubmit = () => {
     swal({
-      title: "Are you sure?",
-      text: "Once deleted, you will not be able to recover this Post!",
-      icon: "warning",
+      title: 'Are you sure?',
+      text: 'Once deleted, you will not be able to recover this Post!',
+      icon: 'warning',
       buttons: true,
       dangerMode: true,
-    })
-    .then(async(willDelete) => {
+    }).then(async (willDelete) => {
       if (willDelete) {
         const formdata = {
-          postid:data._id,
-          userid:User._id,
-          postimage:data.postid
-        }
-        const response = await axios.post("/post/delete-post",formdata,{ withCredentials: true })
-        setMoreoptions(false)
-        console.log(response)
-        if(response.success){
+          postid: data._id,
+          userid: User._id,
+          postimage: data.postid,
+        };
+        const response = await axios.post('/post/delete-post', formdata, {
+          withCredentials: true,
+        });
+        setMoreoptions(false);
+        console.log(response);
+        if (response.success) {
           dispatch({
-            type:"posts",
-            payload:response.posts
-           })
-           swal("Poof! Your Post has been deleted!", {
-             icon: "success",
-           });
+            type: 'posts',
+            payload: response.posts,
+          });
+          swal('Poof! Your Post has been deleted!', {
+            icon: 'success',
+          });
         }
       } else {
-        swal("Your Post is safe!");
+        swal('Your Post is safe!');
       }
     });
-  }
+  };
 
   const postlike = (id) => {
-    setLikesCount(Liked ? likescount - 1 : likescount + 1)
-    setLiked(!Liked)
-     likepost({postid:id},(response) => {
-      console.log(response)
-      if(response.success){
-       dispatch({
-        type:"posts",
-        payload:response.posts
-       })
+    setLikesCount(Liked ? likescount - 1 : likescount + 1);
+    setLiked(!Liked);
+    likepost({ postid: id }, (response) => {
+      console.log(response);
+      if (response.success) {
+        dispatch({
+          type: 'posts',
+          payload: response.posts,
+        });
       }
-     })
-  }
+    });
+  };
 
   return (
-    <div className='Post' key={id}>
-        <div className='post-more-options'>
-          <div>
-            
-            <IconButton
-        aria-label="more"
-        onClick={handleClick}
-        aria-haspopup="true"
-        aria-controls="long-menu"
-      >
-        <MoreVertIcon />
-
-        </IconButton>
-        <Menu 
-        moreoptions={moreoptions} 
-        keepMounted onClose={handleClose} 
-        open={open}>
-          <MenuItem
-            onClick={() => handlesubmit("edit")}>
-            edit
-          </MenuItem>
-          <MenuItem
-            onClick={() => handlesubmit("save")}>
-            save
-          </MenuItem>
-          <MenuItem
-            onClick={() => handlesubmit("delete")}>
-            delete
-          </MenuItem>
-      </Menu>
+    <div className="Post">
+      <div className="post-more-options">
+        <div>
+          <IconButton
+            aria-label="more"
+            onClick={handleClick}
+            aria-haspopup="true"
+            aria-controls="long-menu"
+          >
+            <MoreVertIcon />
+          </IconButton>
+          <Menu
+            moreoptions={moreoptions}
+            keepMounted
+            onClose={handleClose}
+            open={open}
+          >
+            <MenuItem onClick={() => handlesubmit('edit')}>edit</MenuItem>
+            <MenuItem onClick={() => handlesubmit('save')}>save</MenuItem>
+            <MenuItem onClick={() => handlesubmit('delete')}>delete</MenuItem>
+          </Menu>
+        </div>
       </div>
-          </div>
-        <img src={data.posturl} alt="" />
+      <img src={data.posturl} alt="" />
 
-        <div className="PostReact">
-          <img src={Liked ? Heart : NotLike} alt=""
-          onClick={(e) => postlike(data._id)} />
-          <img src={Comment} alt="" />
-          <img src={Share} alt="" />
-        </div>
-        <span style={{color: "var(--gray)",fontSize:'12px'}}>{likescount} Likes</span>
+      <div className="PostReact">
+        <img
+          src={Liked ? Heart : NotLike}
+          alt=""
+          onClick={() => postlike(data._id)}
+        />
+        <img src={Comment} alt="" />
+        <img src={Share} alt="" />
+      </div>
+      <span style={{ color: 'var(--gray)', fontSize: '12px' }}>
+        {likescount}
+        Likes
+      </span>
 
-        <div className='detail'>
-            <span><b>{data.users.username} </b></span>
-            <span>{data.discription}</span>
-        </div>
+      <div className="detail">
+        <span>
+          <b>
+            {data.users.username}
+          </b>
+        </span>
+        <span>{data.discription}</span>
+      </div>
     </div>
-  )
+  );
 }
 
-export default React.memo(Post)
+Post.propTypes = {
+  data: PropTypes.string.isRequired,
+};
+
+export default React.memo(Post);

@@ -1,49 +1,57 @@
-import React,{useState,useEffect} from 'react'
-import PostShare from '../PostShare/PostShare'
-import Posts from '../Posts/Posts'
-import "./PostSide.css"
-import {useDispatch,useSelector} from "react-redux"
-import Loder from '../Loder/Loder'
-import axios from "../../Api/Axios.instence.js"
-
+import React, { Fragment, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { ToastContainer, toast } from 'react-toastify';
+import PostShare from '../PostShare/PostShare';
+import Posts from '../Posts/Posts';
+import './PostSide.css';
+import Loder from '../Loder/Loder';
+import axios from '../../Api/Axios.instence';
 
 function PostSide() {
+  const dispatch = useDispatch();
 
-  const dispatch = useDispatch()
+  const PostsList = useSelector((state) => state.posts);
 
-  const PostsList = useSelector((state) => {
-    return state.posts
-  })
+  const toastoptions = {
+    position: 'bottom-left',
+    autoClose: 5000,
+    pauseOnHover: true,
+    draggable: true,
+  };
 
-  useEffect(()=>{
+  useEffect(() => {
     const PostsApi = async () => {
-      try{
-      const response = await axios.get("/post/all-posts")
-      console.log(response)
-      dispatch({
-        type:"posts",
-        payload:response.posts
-       })
+      try {
+        const response = await axios.get('/post/all-posts');
+        dispatch({
+          type: 'posts',
+          payload: response.posts,
+        });
       } catch (err) {
-        alert("network issue")
+        toast.error('network issue', toastoptions);
       }
-    }
-    PostsApi()
-  },[])
-  if(!PostsList) return (
-        <div className='PostSide'>
-      <PostShare />
-      <div >
-        <Loder />
+    };
+    PostsApi();
+  }, []);
+  if (!PostsList) {
+    return (
+      <div className="PostSide">
+        <PostShare />
+        <div>
+          <Loder />
+        </div>
       </div>
-    </div> 
-  )
+    );
+  }
   return (
-        <div className='PostSide'>
-      <PostShare />
-      <Posts PostsList={PostsList} />
-    </div> 
-  )
+    <>
+      <div className="PostSide">
+        <PostShare />
+        <Posts PostsList={PostsList} />
+      </div>
+      <ToastContainer />
+    </>
+  );
 }
 
-export default React.memo(PostSide)
+export default React.memo(PostSide);

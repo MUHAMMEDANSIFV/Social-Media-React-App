@@ -1,54 +1,50 @@
-import React, { useState, Fragment, useEffect } from 'react'
-import "./Auth.css"
-import Logo from "../../img/logo.png"
-import "react-toastify/dist/ReactToastify.css"
-import { useNavigate } from "react-router-dom"
-import Loder from '../../Components/Loder/Loder'
-import {jwtverifycation} from "../../Api/Auth.Api.js"
-import Login from '../../Components/Auth/Login'
-import Signup from '../../Components/Auth/Signup'
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import Logo from '../../img/logo.png';
+import 'react-toastify/dist/ReactToastify.css';
+import Loder from '../../Components/Loder/Loder';
+import { jwtverifycation } from '../../Api/Auth.Api';
+import Login from '../../Components/Auth/Login';
+import Signup from '../../Components/Auth/Signup';
+import './Auth.css';
 
 function Auth() {
+  const [state, setState] = useState(true);
 
-    
+  const [Loderworking, setLoderworking] = useState(true);
 
-    const [state, setState] = useState(true);
+  const navigate = useNavigate();
 
-    const [Loderworking,setLoderworking] = useState(true)
+  useEffect(() => {
+    jwtverifycation((status) => {
+      console.log(status);
+      if (status.success) {
+        navigate('/home');
+      } else {
+        setLoderworking(false);
+      }
+    });
+  });
 
-    const navigate = useNavigate()
-
-    useEffect(() => {
-         jwtverifycation((status)=>{
-            console.log(status)
-            if(status.success){
-                navigate("/home")
-            }else{
-                setLoderworking(false)
-            }
-         })
-    })
-
-
-    return (
-        <Fragment >
-            {
-                Loderworking ? 
-                <Loder /> :
-                <div className="Auth">
-                <div className="a-left">
-                    <img src={Logo} alt="" />
-                    <div className="Webname">
-                        <h1>Social Media</h1>
-                        <h6>Explore the ideas throughout the world</h6>
-                    </div>
-                </div>
-                {state ? <Login state={state} setState={setState} /> : <Signup state={state} setState={setState} />}
-            </div>
-            }
-        </Fragment>
-    )
+  if (Loderworking) return <Loder />;
+  return (
+    <div className="Auth">
+      <div className="a-left">
+        <img src={Logo} alt="" />
+        <div className="Webname">
+          <h1>Social Media</h1>
+          <h6>
+            Explore the ideas throughout the world
+          </h6>
+        </div>
+      </div>
+      {state ? (
+        <Login state={state} setState={setState} />
+      ) : (
+        <Signup state={state} setState={setState} />
+      )}
+    </div>
+  );
 }
 
-
-export default Auth
+export default Auth;
