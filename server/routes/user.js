@@ -1,14 +1,13 @@
-import express from "express"
-const router = express.Router()
-import {verifytokens} from "../Controllers/Auth.controller.js"
-import { home  , editprofile} from "../Controllers/user.controller.js"
-import {getAllUser} from "../Controllers/user.controller.js"
+import express from 'express';
+import { verifytokens } from '../Controllers/Auth.controller.js';
+import { home, editprofile, getAllUser } from '../Controllers/user.controller.js';
 
-  router.get("/home",verifytokens,home)
+const router = express.Router();
 
-  router.post("/editprofile",verifytokens,editprofile)
+router.get('/home', verifytokens, home);
 
-  router.get("/all-users",verifytokens,getAllUser)
+router.post('/editprofile', verifytokens, editprofile);
 
+router.get('/all-users', verifytokens, getAllUser);
 
 export default router;

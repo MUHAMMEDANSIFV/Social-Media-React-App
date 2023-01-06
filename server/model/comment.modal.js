@@ -1,21 +1,21 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 
 const commentSchema = mongoose.Schema({
-    user:String,
-    postid:String,
-    comment:[
+  user: String,
+  postid: String,
+  comment: [
+    {
+      commentlikes: [
         {
-         commentlikes:[
-            {
-                user:String,
-            }
-         ],
-         commentreplay:[
-            {
-                user:String,
-                replay:String
-            }
-         ]
-        }
-    ]
-},{ timestamps: true })
+          user: String,
+        },
+      ],
+      commentreplay: [
+        {
+          user: String,
+          replay: String,
+        },
+      ],
+    },
+  ],
+}, { timestamps: true });

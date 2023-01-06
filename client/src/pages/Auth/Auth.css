@@ -88,3 +88,21 @@
     cursor: pointer;
     color: #1f7bd3;
 }
+
+.Otp-reset-message{
+    font-weight: bold;
+    font-weight: 520;
+    max-width: 30rem;
+    padding: 1rem;
+    line-height: 2rem;
+}
+
+.error{
+    color: rgb(202, 0, 0);
+    font-weight: bold;
+    padding: 0;
+}
+
+.no-error{
+    display: none;
+}

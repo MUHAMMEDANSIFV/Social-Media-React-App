@@ -40,3 +40,14 @@ export const Signup = async (formdata,callback) => {
        callback(err)
     }
 }
+
+export const sendotp = async (email,callback) => {
+    try{
+
+     const response = await axios.post("/auth/send-otp",{email:email});
+     callback(response)
+    }catch(err){
+        console.log(err)
+        callback(err)
+    }
+}

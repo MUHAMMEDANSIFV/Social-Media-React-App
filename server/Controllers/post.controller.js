@@ -1,279 +1,273 @@
-import PostSchema from "../model/poste.model.js";
-import Userschema from "../model/user.model.js";
-import cloudinary from "cloudinary";
-import multer from "multer";
-import fs from "fs";
-import mongoose from "mongoose";
+import cloudinary from 'cloudinary';
+import multer from 'multer';
+import fs from 'fs';
+import mongoose from 'mongoose';
+import Userschema from '../model/user.model.js';
+import PostSchema from '../model/poste.model.js';
 
-if (!fs.existsSync("./uploads")) {
-     fs.mkdirSync("./uploads");
+if (!fs.existsSync('./uploads')) {
+  fs.mkdirSync('./uploads');
 }
 
-var storage = multer.diskStorage({
-     destination: function (req, file, cb) {
-          cb(null, "./uploads");
-     },
-     filename: function (req, file, cb) {
-          cb(null, file.originalname);
-     },
+const storage = multer.diskStorage({
+  destination(req, file, cb) {
+    cb(null, './uploads');
+  },
+  filename(req, file, cb) {
+    cb(null, file.originalname);
+  },
 });
 
-export const upload = multer({ storage: storage });
+export const upload = multer({ storage });
 
 const uploadToCloudinary = async (localFilePath) => {
-     try {
-          const mainFolderName = "main";
+  try {
+    const mainFolderName = 'main';
 
-          var filePathOnCloudinary = mainFolderName + "/" + localFilePath;
+    const filePathOnCloudinary = `${mainFolderName}/${localFilePath}`;
 
-          const result = await cloudinary.uploader.upload(localFilePath, {
-               public_id: filePathOnCloudinary,
-          });
-     
-          if (result) return result;
-          else false;
-     } catch (err) {
-          console.log(err);
-          return err;
-     }
+    const result = await cloudinary.uploader.upload(localFilePath, {
+      public_id: filePathOnCloudinary,
+    });
+
+    if (result) return result;
+    false;
+  } catch (err) {
+    console.log(err);
+    return err;
+  }
 };
 export const sharepost = async (req, res) => {
-     try {
-          let locaFilePath;
-          if (req.file) {
-               locaFilePath = req.file.path;
-          } else {
-               console.log("file not found");
-               res.json({ error: "file not found" });
-          }
+  try {
+    let locaFilePath;
+    if (req.file) {
+      locaFilePath = req.file.path;
+    } else {
+      console.log('file not found');
+      res.json({ error: 'file not found' });
+    }
 
-          const file = await uploadToCloudinary(locaFilePath);
+    const file = await uploadToCloudinary(locaFilePath);
 
-          if (file.public_id) {
-               
-               const post = {
-                    user: req.userinfo._id,
-                    posturl: file.secure_url,
-                    postid: file.public_id,
-                    discription: req.body.description[0],
-               };
+    if (file.public_id) {
+      const post = {
+        user: req.userinfo._id,
+        posturl: file.secure_url,
+        postid: file.public_id,
+        discription: req.body.description[0],
+      };
 
-               const post1 = await PostSchema(post);
-               const response = await post1.save();
-               
-               const posts = await find_all_post(req.userinfo._id) 
+      const post1 = await PostSchema(post);
+      const response = await post1.save();
 
-               res.json({
-                    success: "Post uploading is successfully finished",
-                    posts: posts,
-               });
-          } else {
-               res.json({ error: "file uploading is failed pelase try again" });
-          }
-     } catch (err) {
-          console.log(err);
-          res.json({
-               error: "Some tecnical error find Over team will fix it soon",
-               message: err,
-          });
-     }
+      const posts = await find_all_post(req.userinfo._id);
+
+      res.json({
+        success: 'Post uploading is successfully finished',
+        posts,
+      });
+    } else {
+      res.json({ error: 'file uploading is failed pelase try again' });
+    }
+  } catch (err) {
+    console.log(err);
+    res.json({
+      error: 'Some tecnical error find Over team will fix it soon',
+      message: err,
+    });
+  }
 };
 
 export const allposts = async (req, res) => {
-     try {
-          const userid = req.userinfo._id
-          
-           const Posts =await find_all_post(userid);
+  try {
+    const userid = req.userinfo._id;
 
-          res.json({ success: "Posts loading success", posts: Posts });
-     } catch (err) {
-          console.log(err)
-     }
+    const Posts = await find_all_post(userid);
+
+    res.json({ success: 'Posts loading success', posts: Posts });
+  } catch (err) {
+    console.log(err);
+  }
 };
 
 export const deletepost = async (req, res) => {
-     try {
-         
-          const userid = req.userinfo._id
+  try {
+    const userid = req.userinfo._id;
 
-          const data = req.body;
-          await cloudinary.uploader.destroy(data.postimage);
-          await PostSchema.deleteOne({ _id: data.postid });
-          await Userschema.updateOne(
-               { _id: data.userid },
-               {
-                    $pull: {
-                         post: data.postid,
-                    },
-               }
-          );
-          const posts = await find_all_post(userid)
+    const data = req.body;
+    await cloudinary.uploader.destroy(data.postimage);
+    await PostSchema.deleteOne({ _id: data.postid });
+    await Userschema.updateOne(
+      { _id: data.userid },
+      {
+        $pull: {
+          post: data.postid,
+        },
+      },
+    );
+    const posts = await find_all_post(userid);
 
-          res.json({ success: "deleted", posts: posts });
-     } catch (err) {
-          console.log(err);
-          res.json({ error: "Some tecnical issue" });
-     }
+    res.json({ success: 'deleted', posts });
+  } catch (err) {
+    console.log(err);
+    res.json({ error: 'Some tecnical issue' });
+  }
 };
 
 export const postlike = async (req, res) => {
-     try {
-          const userid = req.userinfo._id;
-          const postid = req.body.postid;
-          let status;
+  try {
+    const userid = req.userinfo._id;
+    const { postid } = req.body;
+    let status;
 
-          const posts = await PostSchema.findById(postid);
-       
-          const check_like_status = posts.likes.find(
-               (obj) => obj.user == userid
-          );
+    const posts = await PostSchema.findById(postid);
 
-          if (check_like_status) {
-               status = dislikepost();
-          } else {
-               status = likepost();
-          }
+    const check_like_status = posts.likes.find(
+      (obj) => obj.user == userid,
+    );
 
-          async function likepost() {
-               const like = await PostSchema.findByIdAndUpdate(postid, {
-                    $push: {
-                         likes: {
-                              user: userid,
-                         },
-                    },
-               });
-               if (like) return "liked";
-               else return false;
-          }
+    if (check_like_status) {
+      status = dislikepost();
+    } else {
+      status = likepost();
+    }
 
-          async function dislikepost() {
-               const dislike = await PostSchema.findByIdAndUpdate(postid, {
-                    $pull: {
-                         likes: {
-                              user: userid,
-                         },
-                    },
-               });
-               if (dislike) return "disliked";
-               else return false;
-          }
+    async function likepost() {
+      const like = await PostSchema.findByIdAndUpdate(postid, {
+        $push: {
+          likes: {
+            user: userid,
+          },
+        },
+      });
+      if (like) return 'liked';
+      return false;
+    }
 
-          if (status) {
-               const posts = await find_all_post(userid)
+    async function dislikepost() {
+      const dislike = await PostSchema.findByIdAndUpdate(postid, {
+        $pull: {
+          likes: {
+            user: userid,
+          },
+        },
+      });
+      if (dislike) return 'disliked';
+      return false;
+    }
 
-               res.status(200).json({ success: true, posts: posts });
-          } else {
-               res.status(304).json({
-                    error: "Like is Not updated please try again",
-               });
-          }
-     } catch (err) {
-          res.status(500).json({ message: err.message });
-     }
+    if (status) {
+      const posts = await find_all_post(userid);
+
+      res.status(200).json({ success: true, posts });
+    } else {
+      res.status(304).json({
+        error: 'Like is Not updated please try again',
+      });
+    }
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
 };
 
-export const userposts =async (req,res) => {
-    try{
-     console.log("hi")
-     const userid = req.userinfo._id
+export const userposts = async (req, res) => {
+  try {
+    console.log('hi');
+    const userid = req.userinfo._id;
 
-       const Posts = await PostSchema.aggregate([
-          {
-             $match:{
-               user:mongoose.Types.ObjectId(userid)
-             }
+    const Posts = await PostSchema.aggregate([
+      {
+        $match: {
+          user: mongoose.Types.ObjectId(userid),
+        },
+      },
+      {
+        $addFields: {
+          liked: {
+            $cond: {
+              if: {
+                $in: [
+                  mongoose.Types.ObjectId(userid),
+                  '$likes.user',
+                ],
+              },
+              then: true,
+              else: false,
+            },
           },
-         {
-                 $addFields: {
-                      liked: {
-                           $cond: {
-                                if: {
-                                     $in: [
-                                          mongoose.Types.ObjectId(userid),
-                                          "$likes.user",
-                                     ],
-                                },
-                                then: true,
-                                else: false,
-                           },
-                      },
-                      likescount: {
-                           $size: "$likes",
-                      },
-                 },
-            },
-            {
-                 $sort: {
-                      createdAt: -1,
-                 },
-            },
-            {
-                 $lookup: {
-                      from: "users",
-                      localField: "user",
-                      foreignField: "_id",
-                      as: "users",
-                 },
-            },
-            {
-                 $unwind: "$users",
-            },
-       ]);
-    
-       const User =await Userschema.findById(userid)
-       console.log(User)
+          likescount: {
+            $size: '$likes',
+          },
+        },
+      },
+      {
+        $sort: {
+          createdAt: -1,
+        },
+      },
+      {
+        $lookup: {
+          from: 'users',
+          localField: 'user',
+          foreignField: '_id',
+          as: 'users',
+        },
+      },
+      {
+        $unwind: '$users',
+      },
+    ]);
 
-       res.status(200).json({success:true,posts:Posts,user:User})
+    const User = await Userschema.findById(userid);
+    console.log(User);
 
-    }catch(err){
-       console.log(err)
-       res.json({error:err})
-    }
-}
-
+    res.status(200).json({ success: true, posts: Posts, user: User });
+  } catch (err) {
+    console.log(err);
+    res.json({ error: err });
+  }
+};
 
 async function find_all_post(userid) {
-    try{
-
-      const Posts = await PostSchema.aggregate([
-               {
-                    $addFields: {
-                         liked: {
-                              $cond: {
-                                   if: {
-                                        $in:[mongoose.Types.ObjectId(userid),"$likes.user"]
-                                   },
-                                   then: true,
-                                   else: false,
-                              },
-                         },
-                         likescount:{
-                              $size:"$likes"
-                         }
-                    },
-               },
-               {
-                    $sort: {
-                         createdAt: -1,
-                    },
-               },
-               {
-                    $lookup:{
-                         from:"users",
-                         localField:"user",
-                         foreignField:"_id",
-                         as:"users"
-                    }
-               },
-               {
-                    $unwind:"$users"
-               }
-          ])
-          console.log(Posts)
-          return Posts;
-
-    }catch(err){
-     console.log(err)
-     return err
-    }
+  try {
+    const Posts = await PostSchema.aggregate([
+      {
+        $addFields: {
+          liked: {
+            $cond: {
+              if: {
+                $in: [mongoose.Types.ObjectId(userid), '$likes.user'],
+              },
+              then: true,
+              else: false,
+            },
+          },
+          likescount: {
+            $size: '$likes',
+          },
+        },
+      },
+      {
+        $sort: {
+          createdAt: -1,
+        },
+      },
+      {
+        $lookup: {
+          from: 'users',
+          localField: 'user',
+          foreignField: '_id',
+          as: 'users',
+        },
+      },
+      {
+        $unwind: '$users',
+      },
+    ]);
+    console.log(Posts);
+    return Posts;
+  } catch (err) {
+    console.log(err);
+    return err;
+  }
 }

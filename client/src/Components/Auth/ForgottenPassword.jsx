@@ -1,58 +1,75 @@
-import React, { Fragment , useState } from "react";
-import { Link } from "react-router-dom";
+import React, { Fragment , useState} from "react";
+import {sendotp} from "../../Api/Auth.Api"
 import {ToastContainer , toast} from "react-toastify"
 
-function ForgottenPassword(){
+function ForgottenPass({ setForgotPassword }) {
 
-    const [email,setEmail] = useState(null)
+     const [email,setEmail] = useState(null)
+     const [error,setError] = useState(null)
 
-    const handlesubmit = () => {
+     const toastoptions = {
+          position: "bottom-left",
+          autoClose: 5000,
+          pauseOnHover: true,
+          draggable: true,
+     };
+ 
 
-    }
+     const handlesubmit = (e) => {
+         e.preventDefault()
+        if (!email) setError("Email Name is required")
+        else if (!/\S+@\S+\.\S+/.test(email)) setError("please enter the correct email");
+        else {
+          setError(null)
+        }
+        sendotp(email,(response) => {
+          if(response.success){
+            toast.success(`OTP Send to your email:${email}`, toastoptions);
+            setEmail(null);
+          }else{
+            toast.error("Otp sending is failed please try again", toastoptions);
+               
+          }
+          
+     })
+     }
 
-    const handlechange = () => {
 
-    }
+     return (
+          <form
+               onSubmit={(e) => handlesubmit(e)}
+               className='form-div infoForm auth-form'
+          >
+               <h2>Reset Your Password</h2>
+               <span className='Otp-reset-message'>
+                    Loast your password ? Please enter your email address. You
+                    will recceive a link to create a new password via email
+               </span>
+               <div>
+                    <input
+                         type='text'
+                         placeholder='Email'
+                         className='infoinput'
+                         value={email}
+                         onChange={(e) => setEmail(e.target.value)}
+                         name='email'
+                    />
+               </div>
+                <span className={error ? "error" : "no-error"}>{error}</span>
+               <div>
+                    <span
+                         className='link'
+                         onClick={() => setForgotPassword(false)}
+                    >
+                         Go back
+                    </span>
+               </div>
 
-   return (
-        <Fragment>
-             <div className='a-right'>
-                  <form
-                       onSubmit={(event) => handlesubmit(event)}
-                       className='infoForm auth-form'
-                  >
-                       <h2>Login</h2>
-
-                       <div>
-                            <input
-                                 type='password'
-                                 placeholder='Password'
-                                 className='infoinput'
-                                 value={email}
-                                 onChange={(event) => handlechange(event)}
-                                 name='password'
-                            />
-                       </div>
-
-                       <div>
-                            <span style={{ fontSize: "12px" }}>
-                                 I don't want to fogotte my password.{" "}
-                                 <Link to="/"
-                                      className='link'
-                                      
-                                 >
-                                      Go Back
-                                 </Link>
-                            </span>
-                       </div>
-                       <button className='button info-Button' type='submit'>
-                            Login
-                       </button>
-                  </form>
-             </div>
-             <ToastContainer />
-        </Fragment>
-   );
+               <button className='button info-Button' type='submit'>
+                    Send
+               </button>
+          </form>
+     );
 }
 
-export default ForgottenPassword
+export default ForgottenPass;

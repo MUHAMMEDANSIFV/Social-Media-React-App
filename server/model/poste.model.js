@@ -1,35 +1,34 @@
-import mongoose,{Schema} from "mongoose";
+import mongoose, { Schema } from 'mongoose';
 
-const PostSchema = mongoose.Schema(
-        {
-            user:{
-                type:Schema.Types.ObjectId , ref:"user"
-            },
-            posturl:String,
-            postid:String,
-            discription:String,
-            likes:[
-                {
-                    user:{
-                        type:Schema.Types.ObjectId,
-                        ref:"user"
-                    },
-                    likedAt:{
-                        type:Date,
-                        default:Date.now()
-                    }
-                }
-            ],
-            comments:{
-                type:Schema.Types.ObjectId , ref:"comment"
-            },
-            shares:[
-                {
-                    sharefrom:String,
-                    shareto:String,
-                    time:Date
-                }
-            ]
-        },{timestamps: true})
+const PostSchema = mongoose.Schema({
+  user: {
+    type: Schema.Types.ObjectId, ref: 'user',
+  },
+  posturl: String,
+  postid: String,
+  discription: String,
+  likes: [
+    {
+      user: {
+        type: Schema.Types.ObjectId,
+        ref: 'user',
+      },
+      likedAt: {
+        type: Date,
+        default: Date.now(),
+      },
+    },
+  ],
+  comments: {
+    type: Schema.Types.ObjectId, ref: 'comment',
+  },
+  shares: [
+    {
+      sharefrom: String,
+      shareto: String,
+      time: Date,
+    },
+  ],
+}, { timestamps: true });
 
-export default mongoose.model("post",PostSchema)
+export default mongoose.model('post', PostSchema);

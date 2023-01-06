@@ -2,6 +2,7 @@ import React,{Fragment,useState} from 'react'
 import {Login as Loginapi} from "../../Api/Auth.Api"
 import {useNavigate} from "react-router-dom"
 import {ToastContainer,toast} from "react-toastify"
+import ForgottenPass from './ForgottenPassword'
 
 function Login({state,setState}) {
 
@@ -9,6 +10,7 @@ function Login({state,setState}) {
         username: "",
         password: ""
     })
+    const [ForgottenPassword,setForgotPassword] = useState(false)
 
     const navigate = useNavigate();
 
@@ -50,52 +52,62 @@ function Login({state,setState}) {
     return (
          <Fragment>
               <div className='a-right'>
-                   <form
-                        onSubmit={(event) => handlesubmit(event)}
-                        className='infoForm auth-form'
-                   >
-                        <h2>Login</h2>
+                   {ForgottenPassword ? (
+                        <ForgottenPass setForgotPassword={setForgotPassword} />
+                   ) : (
+                        <form
+                             onSubmit={(event) => handlesubmit(event)}
+                             className='infoForm auth-form'
+                        >
+                             <h2>Login</h2>
 
-                        <div>
-                             <input
-                                  type='text'
-                                  placeholder='User Name'
-                                  className='infoinput'
-                                  value={formdata.username}
-                                  onChange={(event) => handlechange(event)}
-                                  name='username'
-                             />
+                             <div>
+                                  <input
+                                       type='text'
+                                       placeholder='User Name'
+                                       className='infoinput'
+                                       value={formdata.username}
+                                       onChange={(event) => handlechange(event)}
+                                       name='username'
+                                  />
 
-                             <input
-                                  type='password'
-                                  placeholder='Password'
-                                  className='infoinput'
-                                  value={formdata.password}
-                                  onChange={(event) => handlechange(event)}
-                                  name='password'
-                             />
-                        </div>
-
-                        <div >
-                             <span className='link'>
-                                       Forgotten account?
-                             </span>
+                                  <input
+                                       type='password'
+                                       placeholder='Password'
+                                       className='infoinput'
+                                       value={formdata.password}
+                                       onChange={(event) => handlechange(event)}
+                                       name='password'
+                                  />
                              </div>
-                             <div >
-                             <span style={{ fontSize: "12px" }}>
-                                  If You dont't an account.{" "}
+
+                             <div>
                                   <span
                                        className='link'
-                                       onClick={() => setState(!state)}
+                                       onClick={() => setForgotPassword(true)}
                                   >
-                                       Signup
+                                       Forgotten account?
                                   </span>
-                             </span>
-                        </div>
-                        <button className='button info-Button' type='submit'>
-                             Login
-                        </button>
-                   </form>
+                             </div>
+                             <div>
+                                  <span style={{ fontSize: "12px" }}>
+                                       If You dont't an account.{" "}
+                                       <span
+                                            className='link'
+                                            onClick={() => setState(!state)}
+                                       >
+                                            Signup
+                                       </span>
+                                  </span>
+                             </div>
+                             <button
+                                  className='button info-Button'
+                                  type='submit'
+                             >
+                                  Login
+                             </button>
+                        </form>
+                   )}
               </div>
               <ToastContainer />
          </Fragment>
