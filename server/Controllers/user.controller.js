@@ -40,15 +40,11 @@ export const editprofile = async (req, res) => {
         const following = updateuser.following
           ? updateuser.following.length
           : 0;
-        const workat = user.workat
-          ? user.workat
-          : 'please add work informaion';
+        const workat = user.workat ? user.workat : 'please add work informaion';
         const livesin = user.livesin
           ? user.livesin
           : 'please add your place and details';
-        const status = user.status
-          ? user.status
-          : 'please add your status';
+        const status = user.status ? user.status : 'please add your status';
 
         afterupdate = {
           _id: afterupdate._id,
@@ -76,19 +72,18 @@ export const editprofile = async (req, res) => {
           { expiresIn: '1d' },
         );
 
-        res.cookie('refreshtoken', refreshtoken, {
-          sameSite: 'strict',
-          path: '/',
-          expires: new Date(new Date().getTime() + 100 * 1000),
-          httpOnly: true,
-          secure: true,
-        })
+        res
+          .cookie('refreshtoken', refreshtoken, {
+            sameSite: 'strict',
+            path: '/',
+            expires: new Date(new Date().getTime() + 100 * 1000),
+            httpOnly: true,
+            secure: true,
+          })
           .cookie('accesstoken', accessToken, {
             sameSite: 'strict',
             path: '/',
-            expires: new Date(
-              new Date().getTime() + 100 * 1000,
-            ),
+            expires: new Date(new Date().getTime() + 100 * 1000),
             httpOnly: true,
             secure: true,
           })

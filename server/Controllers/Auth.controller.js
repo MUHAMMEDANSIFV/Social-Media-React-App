@@ -3,6 +3,7 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import nodemailer from 'nodemailer';
 import userSchema from '../model/user.model.js';
+import rn from "random-number"
 
 export const Signup = async (req, res) => {
   try {
@@ -234,6 +235,12 @@ export const sendotp = async (req, res) => {
   try {
     const { email } = req.body;
 
+    const options = {
+      min: 100000,
+      max: 999999,
+      integer: true
+    }
+    const Otp = rn(options)
     // create reusable transporter object using the default SMTP transport
     const transporter = nodemailer.createTransport({
       service: 'Gmail',
@@ -250,20 +257,60 @@ export const sendotp = async (req, res) => {
       to: email, // list of receivers
       subject: 'Hello ✔', // Subject line
       text: 'Hello world?', // plain text body
-      html: '<b>Hello world?</b>', // html body
+      html: `<div style="font-family: Helvetica,Arial,sans-serif;min-width:1000px;overflow:auto;line-height:2"><div style="margin:50px auto;width:70%;padding:20px 0"><div style="border-bottom:1px solid #eee"><a href="" style="font-size:1.4em;color: #00466a;text-decoration:none;font-weight:600">${process.env.APPLICATION_NAME}</a></div><p style="font-size:1.1em">Hi,</p><p>Thank you for choosing ${process.env.APPLICATION_NAME}. Use the following OTP to complete your vefification procedures. OTP is valid for 5 minutes</p><h2 style="background: #00466a;margin: 0 auto;width: max-content;padding: 0 10px;color: #fff;border-radius: 4px;">${Otp}</h2><p style="font-size:0.9em;">Regards,<br />Your Brand</p><hr style="border:none;border-top:1px solid #eee" /><div style="float:right;padding:8px 0;color:#aaa;font-size:0.8em;line-height:1;font-weight:300"><p>${process.env.APPLICATION_NAME} Inc</p><p>1600 Amphitheatre Parkway</p><p>California</p></div></div></div>`, // html body
     };
 
-    transporter.sendMail(info, (error, done) => {
+    transporter.sendMail(info,async (error, done) => {
       if (error) {
         console.log('error');
         console.log(error);
+        res.json({error:true})
       } else {
-        console.log('success');
-        console.log(done);
-        res.status(200).json({ success: true });
+        const secureOTP = await bcrypt.hash(Otp.toString(),10)
+        const verificationToken = jwt.sign(
+          {OTP:secureOTP},
+          process.env.VERIFICATION_TOKEN_SECRET_KEY,
+          { expiresIn: '5m' },
+        );
+
+        res.status(200).cookie('verificationToken', verificationToken, {
+          sameSite: 'strict',
+          path: '/',
+          maxAge: 1000 * 60 * 60,
+          httpOnly: true,
+          secure: true,
+        }).json({ success: true });
       }
     });
   } catch (err) {
     console.log(err);
-  }
+  }  
 };
+
+export const otpverification = async (req,res) => {
+    try{
+
+     const check_Otp = req.body.OTP;
+     const Otp_inToken = req.cookies.verificationToken;
+     console.log(Otp_inToken)
+
+     jwt.verify(Otp_inToken, process.env.VERIFICATION_TOKEN_SECRET_KEY,async (err,done) => {
+      if(err.message === 'jwt expired'){
+        res.json({error:"jwt expired"})
+      }else if(done){
+       const otp_validation = await bcrypt.compare(check_Otp,done.OTP);
+       if(otp_validation){
+        res.json({success:true})
+       }else{
+        res.json({error:"OTP incorrect"})
+       }
+      }else{
+        res.json({error:true})
+      }
+     })
+
+    }catch(err){
+      console.log(err)
+      res.json({error:err})
+    }
+}

@@ -48,7 +48,15 @@ export const sendotp = async (email, callback) => {
     const response = await axios.post('/auth/send-otp', { email });
     callback(response);
   } catch (err) {
-    console.log(err);
+    callback(err);
+  }
+};
+
+export const otpverification = (otp, callback) => {
+  try {
+    const response = axios.post('/auth/Otp-verification', { OTP: otp });
+    callback(response);
+  } catch (err) {
     callback(err);
   }
 };

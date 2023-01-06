@@ -1,6 +1,6 @@
 import express from 'express';
 import {
-  Signup, Login, refreshtoken, verifytokens, Logout, sendotp,
+  Signup, Login, refreshtoken, verifytokens, Logout, sendotp, otpverification
 } from '../Controllers/Auth.controller.js';
 
 const router = express.Router();
@@ -16,5 +16,7 @@ router.get('/jwtveryfication', verifytokens, (req, res) => { res.status(200).jso
 router.get('/Logout', verifytokens, Logout);
 
 router.post('/send-otp', sendotp);
+
+router.post('/Otp-verification',otpverification)
 
 export default router;
