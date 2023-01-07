@@ -1,20 +1,28 @@
-import React, { useState, Fragment } from 'react';
+/* eslint-disable no-underscore-dangle */
+import React, {
+  useState, Fragment, useEffect, useRef,
+} from 'react';
 
 import './ChatBox.css';
 import InputEmoji from 'react-input-emoji';
 import PropTypes from 'prop-types';
+import { io } from 'socket.io-client';
 
 function ChatBox({ currentUser, currentchat }) {
   const [newMessage, setNewMessages] = useState('');
   const [chats, setChats] = useState(null);
 
+  const socket = useRef();
+
   const handlechange = (newMessages) => {
     setNewMessages(newMessages);
   };
 
-  const onSubmit = () => {
-    setChats(currentUser);
-  };
+  useEffect(() => {
+    setChats('hi');
+    socket.current = io('http://localhost:8000');
+    socket.current.emit('new-user-add', currentUser._id);
+  }, [currentUser]);
 
   return (
     <div className="ChatBox-container">
@@ -73,7 +81,7 @@ function ChatBox({ currentUser, currentchat }) {
               value={newMessage}
               onChange={(e) => handlechange(e)}
             />
-            <div className="send-button button" onClick={onSubmit}>
+            <div className="send-button button">
               Send
             </div>
           </div>

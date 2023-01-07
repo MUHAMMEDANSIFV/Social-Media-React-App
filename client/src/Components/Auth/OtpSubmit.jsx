@@ -1,10 +1,12 @@
 import React, { Fragment, useState } from 'react';
 import PropTypes from 'prop-types';
 import { ToastContainer, toast } from 'react-toastify';
-import { otpverification } from '../../Api/Auth.Api';
+import { sendotp, otpverification } from '../../Api/Auth.Api';
+import SetNewPassword from './SetNewPassword';
 
 function OtpSubmit({ setOtpSubmit, Otpsubmit }) {
   const [otp, setOtp] = useState(null);
+  const [NewPassword, SetNewpassword] = useState(false);
 
   const toastoptions = {
     position: 'bottom-left',
@@ -13,25 +15,50 @@ function OtpSubmit({ setOtpSubmit, Otpsubmit }) {
     draggable: true,
   };
 
-  const handlesubmit = (e) => {
-    e.preventDefault();
-    otpverification(otp, (response) => {
-      if (response.error === 'jwt expired') {
-        toast.error('Your Otp valid only 5 minuts. Its already expaire', toastoptions);
+  const otpresend = () => {
+    sendotp(Otpsubmit, (response) => {
+      if (response.success) {
+        toast.success('OTP send Seccessfully Please check your Email', toastoptions);
+      } else {
+        toast.error('Otp sending is failed please try again', toastoptions);
       }
     });
   };
 
+  const handlesubmit = (e) => {
+    e.preventDefault();
+    if (otp) {
+      otpverification(otp, (response) => {
+        if (response.error === 'jwt expired') {
+          toast.error(
+            'Your Otp valid only 5 minuts. Its already expaire',
+            toastoptions,
+          );
+        } else if (response.error === 'OTP incorrect') {
+          toast.error('Enterd OTP is incorrect Please try again', toastoptions);
+        } else if (response.error) {
+          toast.error('OTP Verification is failed please try again');
+        } else if (response.success) {
+          console.log('here');
+          SetNewpassword(true);
+        } else {
+          toast.error('An error find OTP validation Please try again');
+        }
+      });
+    }
+  };
+
+  if (NewPassword) return <SetNewPassword SetNewpassword={SetNewpassword} />;
   return (
     <>
       <form
-        onClick={(e) => handlesubmit(e)}
+        onSubmit={(e) => handlesubmit(e)}
         className="form-div infoForm auth-form"
       >
         <h2>OTP verification</h2>
         <span className="Otp-reset-message">
-          A verufucatuib code has been send to your email
-          <span style={{ color: 'green' }}>{ Otpsubmit }</span>
+          A verification code has been send to your email
+          <span style={{ color: 'green' }}>{Otpsubmit}</span>
           Check your Mail Box as well.
         </span>
         <div>
@@ -46,6 +73,9 @@ function OtpSubmit({ setOtpSubmit, Otpsubmit }) {
         </div>
         {/* <span className={error ? 'error' : 'no-error'}>{error}</span> */}
         <div>
+          <span className="link" onClick={() => otpresend()}>
+            resend OTP
+          </span>
           <span className="link" onClick={() => setOtpSubmit(false)}>
             Go back
           </span>

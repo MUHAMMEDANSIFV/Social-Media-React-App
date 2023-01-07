@@ -15,10 +15,19 @@ export const allchatster = async (callback) => {
 export const addnewchat = async (chatster, callback) => {
   try {
     const response = await axios.post(
-      `/${baseurl}/add-new-chat`,
+      `/${baseurl}/add-new-chatster`,
       chatster,
     );
 
+    callback(response);
+  } catch (err) {
+    callback(err);
+  }
+};
+
+export const addnewmessage = async (data, callback) => {
+  try {
+    const response = await axios.post(`/${baseurl}/add-new-message`, data);
     callback(response);
   } catch (err) {
     callback(err);

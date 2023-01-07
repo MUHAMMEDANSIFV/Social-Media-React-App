@@ -234,13 +234,12 @@ export const Logout = async (req, res) => {
 export const sendotp = async (req, res) => {
   try {
     const { email } = req.body;
-
     const options = {
       min: 100000,
       max: 999999,
       integer: true
     }
-    const Otp = rn(options)
+    let Otp = rn(options)
     // create reusable transporter object using the default SMTP transport
     const transporter = nodemailer.createTransport({
       service: 'Gmail',
@@ -266,9 +265,10 @@ export const sendotp = async (req, res) => {
         console.log(error);
         res.json({error:true})
       } else {
-        const secureOTP = await bcrypt.hash(Otp.toString(),10)
+        const salt = await bcrypt.genSalt();
+        const secureOTP = await bcrypt.hash(Otp.toString(),salt)
         const verificationToken = jwt.sign(
-          {OTP:secureOTP},
+          {OTP:secureOTP,Email:email},
           process.env.VERIFICATION_TOKEN_SECRET_KEY,
           { expiresIn: '5m' },
         );
@@ -295,17 +295,27 @@ export const otpverification = async (req,res) => {
      console.log(Otp_inToken)
 
      jwt.verify(Otp_inToken, process.env.VERIFICATION_TOKEN_SECRET_KEY,async (err,done) => {
-      if(err.message === 'jwt expired'){
+      if(done){
+        console.log(done)
+        const otp_validation = await bcrypt.compare(check_Otp,done.OTP);
+        console.log(otp_validation)
+        if(otp_validation){
+          userSchema.findOneAndUpdate({email:done.Email},{
+           $set:{
+             emailverified:true
+           }
+          },(err,result) => {
+            console.log(result)
+           if(err) res.json({error:err})
+            res.json({success:true})
+          })
+        }else{
+         res.json({error:"OTP incorrect"})
+        }
+       }else if(err.message === 'jwt expired'){
         res.json({error:"jwt expired"})
-      }else if(done){
-       const otp_validation = await bcrypt.compare(check_Otp,done.OTP);
-       if(otp_validation){
-        res.json({success:true})
-       }else{
-        res.json({error:"OTP incorrect"})
-       }
       }else{
-        res.json({error:true})
+        res.json({error:"error"})
       }
      })
 
@@ -313,4 +323,4 @@ export const otpverification = async (req,res) => {
       console.log(err)
       res.json({error:err})
     }
-}
+  }

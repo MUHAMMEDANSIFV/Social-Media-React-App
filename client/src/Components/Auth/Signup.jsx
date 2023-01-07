@@ -3,8 +3,8 @@
 import React, { useState, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { ToastContainer, toast } from 'react-toastify';
+import PasswordStrengthBar from 'react-password-strength-bar';
 import { Signup as Signupapi } from '../../Api/Auth.Api';
-import Otp from './Otp';
 
 function Signup({ setState, state }) {
   const [otpverify, setOtpverify] = useState(false);
@@ -77,7 +77,7 @@ function Signup({ setState, state }) {
   if (otpverify) {
     return (
       <div className="a-right">
-        <Otp setOtpverify={setOtpverify} email={formdata.email} />
+        <h1>{setOtpverify}</h1>
       </div>
     );
   }
@@ -150,6 +150,12 @@ function Signup({ setState, state }) {
               onChange={(event) => handlechange(event)}
               name="confirmpassword"
             />
+
+          </div>
+
+          <div>
+            <PasswordStrengthBar password={formdata.password} />
+            <PasswordStrengthBar password={formdata.confirmpassword} />
           </div>
 
           <div>

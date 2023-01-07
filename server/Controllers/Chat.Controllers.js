@@ -20,7 +20,7 @@ export const allchatster = async (req, res) => {
   }
 };
 
-export const addnewchat = async (req, res) => {
+export const addnewchatster = async (req, res) => {
   try {
     const userid = req.userinfo._id;
 
@@ -46,3 +46,31 @@ export const addnewchat = async (req, res) => {
     console.log(err);
   }
 };
+
+export const getchats = (req,res) => {
+  try{
+
+    
+
+  }catch(err){
+      console.log(err)
+  }
+}
+
+export const addNewchat = async (req,res) => {
+  try{
+
+      const data = req.body;
+  const message = await MessageSchema(data)
+  const response = await message.save();
+  if(response){
+  res.json({success:true})
+  }else{
+      res.json({error:true})
+  }
+
+  }catch(err){
+      console.log(err)
+      res.json({error:err})
+  }
+}

@@ -60,7 +60,7 @@
 .infoForm > div {
     display: flex;
     gap: 1rem;
-    height: 1rem;
+    height: 2rem;
     width: 100%;
 
 }
@@ -100,9 +100,13 @@
 .error{
     color: rgb(202, 0, 0);
     font-weight: bold;
-    padding: 0;
 }
 
 .no-error{
+
     display: none;
+}
+
+.passwordstrength{
+   color: #1f7bd3; 
 }

@@ -21,7 +21,7 @@ export const Login = async (formdata, callback) => {
     if (user) {
       callback(user);
     } else {
-      console.log('error');
+      callback('error');
     }
   } catch (err) {
     callback(err);
@@ -52,9 +52,10 @@ export const sendotp = async (email, callback) => {
   }
 };
 
-export const otpverification = (otp, callback) => {
+export const otpverification = async (otp, callback) => {
   try {
-    const response = axios.post('/auth/Otp-verification', { OTP: otp });
+    const response = await axios.post('/auth/Otp-verification', { OTP: otp });
+    console.log(response);
     callback(response);
   } catch (err) {
     callback(err);

@@ -51,6 +51,14 @@ const userSchema = mongoose.Schema(
     },
     lastSeenAt: Date,
     presence: Boolean,
+    emailverified:{
+      type:Boolean,
+      default:false,
+    },
+    access:{
+      type:Boolean,
+      default:true
+    }
   },
   { timestamps: true },
 );
