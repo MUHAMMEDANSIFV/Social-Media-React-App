@@ -48,7 +48,7 @@ function OtpSubmit({ setOtpSubmit, Otpsubmit }) {
     }
   };
 
-  if (NewPassword) return <SetNewPassword SetNewpassword={SetNewpassword} />;
+  if (NewPassword) return <SetNewPassword OtpSubmit={OtpSubmit} SetNewpassword={SetNewpassword} />;
   return (
     <>
       <form

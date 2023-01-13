@@ -1,11 +1,17 @@
-import { Loader } from '@mantine/core';
-import React, { Fragment } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 
 function Conversation({ setcurrentchat }) {
   const data = useSelector((state) => state.chatmembers);
-  if (!data) return <Loader />;
+  console.log(data);
+  if (!data) {
+    return (
+      <div>
+        You have no chat yet
+      </div>
+    );
+  }
   return (
     <>
       {data.chatsters.map((chatster) => (

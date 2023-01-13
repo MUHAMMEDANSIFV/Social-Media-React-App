@@ -33,3 +33,12 @@ export const addnewmessage = async (data, callback) => {
     callback(err);
   }
 };
+
+export const getallmessage = async (data, callback) => {
+  try {
+    const response = await axios.post(`/${baseurl}/get-messages`, data);
+    callback(response);
+  } catch (err) {
+    callback(err);
+  }
+};

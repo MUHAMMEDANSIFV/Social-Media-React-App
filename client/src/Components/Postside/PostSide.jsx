@@ -1,6 +1,6 @@
-import React, { Fragment, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { ToastContainer, toast } from 'react-toastify';
+import { toast } from 'react-toastify';
 import PostShare from '../PostShare/PostShare';
 import Posts from '../Posts/Posts';
 import './PostSide.css';
@@ -44,13 +44,10 @@ function PostSide() {
     );
   }
   return (
-    <>
-      <div className="PostSide">
-        <PostShare />
-        <Posts PostsList={PostsList} />
-      </div>
-      <ToastContainer />
-    </>
+    <div className="PostSide">
+      <PostShare />
+      <Posts PostsList={PostsList} />
+    </div>
   );
 }
 

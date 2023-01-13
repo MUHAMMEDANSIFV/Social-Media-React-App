@@ -3,6 +3,7 @@ import './ProfileCard.css';
 import { Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
+import UploadIcon from '@mui/icons-material/Upload';
 import Cover from '../../img/cover.jpg';
 import EditprofileModel from '../EditprofileModal/EditprofileModel';
 
@@ -23,6 +24,9 @@ function ProfileCard({ Postscount, ProfilePage }) {
                          }
           alt=""
         />
+        <div className="upload-icon">
+          <UploadIcon />
+        </div>
       </div>
 
       <div className="ProfileName">

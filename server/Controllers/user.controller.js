@@ -109,7 +109,7 @@ export const editpersonalinformation = (req, res) => {
 
 export const getAllUser = async (req, res) => {
   try {
-    const alluser = await Userschema.find({}).limit(5);
+    const alluser = await Userschema.find({_id:{$ne:req.userinfo._id}}).limit(10);
 
     res.status(200).json({ success: true, AllUser: alluser });
   } catch (err) {

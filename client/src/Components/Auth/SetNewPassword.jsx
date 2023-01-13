@@ -2,8 +2,9 @@
 import React, { useState } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
 import PropTypes from 'prop-types';
+import { forgottenpassword } from '../../Api/Auth.Api';
 
-function SetNewPassword({ SetNewpassword }) {
+function SetNewPassword({ OtpSubmit, SetNewpassword }) {
   const [formdata, setFormdata] = useState({
     password: '',
     confirmpassword: '',
@@ -30,24 +31,34 @@ function SetNewPassword({ SetNewpassword }) {
     if (password === '') {
       errormessage.newpassword = 'Password is required';
       error = true;
-    } else if (password.length < 10) { errormessage.newpassword = 'please enter at least 10 characters'; error = true; }
+    } else if (password.length < 10) { errormessage.newpassword = 'please enter at least 10 characters'; error = true; } else { errormessage.newpassword = ''; }
     if (confirmpassword === '') {
       errormessage.confirmpassword = 'ConfirmPasswrod is required';
       error = true;
     } else if (confirmpassword !== password) {
       errormessage.confirmpassword = 'please enter same password';
       error = true;
+    } else {
+      errormessage.confirmpassword = '';
     }
     setFormdataerror(errormessage);
-    if (!error) return true;
-    return false;
+    if (error) return true;
+    return true;
   };
 
   const handlesubmit = (e) => {
     setFormdataerror({ ...formdataerror, newpassword: 'password' });
     e.preventDefault();
     if (handlevalidation()) {
-      console.log(formdataerror);
+      const data = {
+        email: OtpSubmit,
+        password: formdata.password,
+      };
+      forgottenpassword(data, (response) => {
+        if (response.success) {
+          toast.success('Password is reset seccessfully', toastoptions);
+        }
+      });
     }
   };
 
@@ -55,8 +66,6 @@ function SetNewPassword({ SetNewpassword }) {
     setFormdata({ ...formdata, [e.target.name]: e.target.value });
     handlevalidation();
   };
-
-  toast.success('success', toastoptions);
   return (
     <>
       <form onSubmit={(e) => handlesubmit(e)} className="infoForm auth-form">
@@ -86,7 +95,7 @@ function SetNewPassword({ SetNewpassword }) {
 
         </div>
 
-        <div className="error">
+        <div className={formdata.password !== '' || formdata.confirmpassword !== '' ? 'error' : 'no-error'}>
           <span className="errror">{formdataerror.newpassword}</span>
           <span className="errror">{formdataerror.confirmpassword}</span>
         </div>
@@ -107,6 +116,7 @@ function SetNewPassword({ SetNewpassword }) {
 
 SetNewPassword.propTypes = {
   SetNewpassword: PropTypes.bool.isRequired,
+  OtpSubmit: PropTypes.bool.isRequired,
 };
 
 export default SetNewPassword;

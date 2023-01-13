@@ -12,6 +12,7 @@ import AuthRouter from './routes/AuthRouter.js';
 import UserRouter from './routes/user.js';
 import PostRouter from './routes/PostRouter.js';
 import ChatRouter from './routes/Chat.Router.js';
+import CommentRouter from './routes/Comment.Router.js'
 
 dotenv.config();
 
@@ -41,3 +42,4 @@ app.use('/auth', AuthRouter);
 app.use('/user', UserRouter);
 app.use('/post', PostRouter);
 app.use('/chat', ChatRouter);
+app.use('/comment', CommentRouter);

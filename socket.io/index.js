@@ -12,11 +12,24 @@ io.on('connection', (socket) => {
         if(!activeUser.some((user) => user.userId === newUserId)){
             activeUser.push({
                 userId:newUserId,
-                socketId:socket.id
+                socketId:socket.id,
             })
         }
         console.log("Connected User",activeUser)
         io.emit('get-users',activeUser)
+    })
+
+    socket.on('send-message',(data) => {
+        console.log(data)
+        console.log('active user',activeUser)
+        console.log('sending from socket to : ', data.receiverid)
+        console.log('data :',data)
+         activeUser.forEach((user) => {
+            if(user.userId == data.receiverid){
+                io.to(user.socketId).emit('recevie-messages', data)
+
+            }
+        })
     })
 
     socket.on('disconnect',() => {

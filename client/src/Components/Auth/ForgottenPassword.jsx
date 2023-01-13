@@ -26,6 +26,8 @@ function ForgottenPass({ setForgotPassword }) {
           toast.success(`OTP Send to your email:${email}`, toastoptions);
           setOtpSubmit(` ${email} `);
           setEmail('');
+        } else if (response.error) {
+          toast.error(response.error, toastoptions);
         } else {
           toast.error('Otp sending is failed please try again', toastoptions);
         }

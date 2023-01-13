@@ -102,3 +102,7 @@
     margin-bottom: 1rem;
     cursor: pointer;
 }
+
+.upload-icon {
+    position: absolute;
+}

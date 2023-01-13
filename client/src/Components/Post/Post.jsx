@@ -8,17 +8,19 @@ import Menu from '@mui/material/Menu';
 import { useSelector, useDispatch } from 'react-redux';
 import swal from 'sweetalert';
 import PropTypes from 'prop-types';
-import Comment from '../../img/comment.png';
+import comment from '../../img/comment.png';
 import Share from '../../img/share.png';
 import Heart from '../../img/like.png';
 import NotLike from '../../img/notlike.png';
 import axios from '../../Api/Axios.instence';
 import { likepost } from '../../Api/Post.Api';
+import CommentModal from '../Comment.Modal/Comment.Modal';
 
 function Post({ data }) {
   const [moreoptions, setMoreoptions] = useState(false);
   const [Liked, setLiked] = useState(null);
   const [likescount, setLikesCount] = useState(null);
+  const [ModalOpened, setModalOpened] = useState(false);
   const User = useSelector((state) => state.user);
 
   useEffect(() => {
@@ -118,7 +120,7 @@ function Post({ data }) {
           alt=""
           onClick={() => postlike(data._id)}
         />
-        <img src={Comment} alt="" />
+        <img src={comment} alt="" onClick={() => setModalOpened(data)} />
         <img src={Share} alt="" />
       </div>
       <span style={{ color: 'var(--gray)', fontSize: '12px' }}>
@@ -134,6 +136,7 @@ function Post({ data }) {
         </span>
         <span>{data.discription}</span>
       </div>
+      {ModalOpened ? <CommentModal ModalOpened={ModalOpened} setModalOpened={setModalOpened} /> : ''}
     </div>
   );
 }

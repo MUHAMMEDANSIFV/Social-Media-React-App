@@ -1,16 +1,18 @@
 import ChatSterSchema from '../model/chatster.modal.js';
+import MessageSchema from '../model/chatmessage.modal.js';
 
 export const allchatster = async (req, res) => {
   try {
+    const user = req.userinfo;
     const userid = req.userinfo._id;
     const chatsteres_list = await ChatSterSchema.findOne({
       user: userid,
     }).populate('chatsters.personid');
-    console.log(chatsteres_list);
     if (chatsteres_list) {
       res.status(200).json({
         success: true,
         chatsteres: chatsteres_list,
+        user: user,
       });
     } else {
       res.status(200).json({ status: 'You have No message yet' });
@@ -23,13 +25,28 @@ export const allchatster = async (req, res) => {
 export const addnewchatster = async (req, res) => {
   try {
     const userid = req.userinfo._id;
+    const chatster = req.body.chatster
 
-    const chatster = await ChatSterSchema.findOneAndUpdate(
-      { user: userid },
+       const updateone = await ChatSterSchema.findOneAndUpdate(
+      { user: userid , 'chatsters.personid':{$ne:chatster}},
       {
         $push: {
           chatsters: {
-            personid: req.body.chatster,
+            personid: chatster,
+          },
+        },
+      },
+      {
+        upsert: true,
+      },
+    );
+
+    const updatetwo = await ChatSterSchema.findOneAndUpdate(
+      { user: chatster , 'chatsters.personid':{$ne:userid}},
+      {
+        $push: {
+          chatsters: {
+            personid: userid,
           },
         },
       },
@@ -47,30 +64,37 @@ export const addnewchatster = async (req, res) => {
   }
 };
 
-export const getchats = (req,res) => {
-  try{
+export const getallmessages = async (req, res) => {
+  try {
 
-    
+    const { currentUser, currentchatster } = req.body;
 
-  }catch(err){
-      console.log(err)
+    const response = await MessageSchema.find({
+      $or: [
+        { senderId: currentUser, receiverid: currentchatster },
+        { senderId: currentchatster, receiverid: currentUser },
+      ],
+    }).sort({ createdAt: 1 });
+
+    res.json({ success: true, message: response });
+  } catch (err) {
+    console.log(err);
+    res.json({ error: err });
   }
-}
+};
 
-export const addNewchat = async (req,res) => {
-  try{
-
-      const data = req.body;
-  const message = await MessageSchema(data)
-  const response = await message.save();
-  if(response){
-  res.json({success:true})
-  }else{
-      res.json({error:true})
+export const addNewchat = async (req, res) => {
+  try {
+    const data = req.body;
+    const message = await MessageSchema(data);
+    const response = await message.save();
+    if (response) {
+      res.json({ success: true });
+    } else {
+      res.json({ error: true });
+    }
+  } catch (err) {
+    console.log(err);
+    res.json({ error: err });
   }
-
-  }catch(err){
-      console.log(err)
-      res.json({error:err})
-  }
-}
+};

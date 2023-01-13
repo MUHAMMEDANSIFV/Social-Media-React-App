@@ -108,11 +108,11 @@ function EditprofileModel({ ModalOpened, setModalOpened }) {
           type: 'user',
           payload: response.user,
         });
+        afterupdation();
         toast.success('Profile udpation successfully complited', toastoptions);
       } else if (response.error) {
         setalertopen(response.error);
         setTimeout(() => {
-          afterupdation();
           setModalOpened(true);
         }, 5000);
       }
@@ -330,7 +330,7 @@ function EditprofileModel({ ModalOpened, setModalOpened }) {
 
           <div>
             <input
-              type="text"
+              type="password"
               placeholder="Password"
               className="infoinput"
               value={formdata.password}

@@ -1,7 +1,12 @@
-import React, { useEffect, Fragment, useState } from 'react';
+/* eslint-disable no-underscore-dangle */
+import React, {
+  useEffect, Fragment, useState, useRef,
+} from 'react';
 import './Chat.css';
 import { Loader } from '@mantine/core';
 import { useDispatch, useSelector } from 'react-redux';
+import { toast } from 'react-toastify';
+import { io } from 'socket.io-client';
 import FollowersCard from '../../Components/AllUsers/AllUsers';
 import ChatBox from '../../Components/ChatBox/ChatBox';
 import { allchatster } from '../../Api/Chat.Api';
@@ -10,25 +15,59 @@ import Conversation from '../../Components/Conversation/Conversation';
 
 function Chat() {
   const dispatch = useDispatch();
-  const [loader, setLoader] = useState(null);
+  const [loader, setLoader] = useState(true);
   const [currentchat, setcurrentchat] = useState(null);
+  const [sendmessages, setSendmessages] = useState(null);
+  const [receviemessages, setreceviemessages] = useState(null);
   const User = useSelector((state) => state.user);
-
   const chatsters = useSelector((state) => state.chatmembers);
 
+  const toastoptions = {
+    position: 'bottom-left',
+    autoClose: 5000,
+    pauseOnHover: true,
+    draggable: true,
+  };
+
+  const socket = useRef();
+
   useEffect(() => {
-    setLoader(true);
+    if (User) {
+      socket.current = io('http://localhost:8000');
+      socket.current.emit('new-user-add', User._id);
+    }
+  }, [User]);
+
+  useEffect(() => {
+    if (sendmessages !== null) {
+      socket.current.emit('send-message', sendmessages);
+    }
+  }, [sendmessages]);
+
+  useEffect(() => {
+    socket.current.on('recevie-messages', (data) => {
+      setreceviemessages(data);
+    });
+  }, []);
+
+  useEffect(() => {
     allchatster((response) => {
       if (response.success) {
         dispatch({
           type: 'chatmembers',
           payload: response.chatsteres,
         });
+        dispatch({
+          type: 'user',
+          payload: response.user,
+        });
+      } else {
+        toast.error('Messages Load a error find please try again', toastoptions);
       }
       setLoader(false);
     });
   }, []);
-  if (loader) {
+  if (loader !== false) {
     return (
       <div className="chatloader">
         <Loader />
@@ -48,12 +87,18 @@ function Chat() {
             </div>
 
             <h2>Chat Suggestion</h2>
-            <FollowersCard status />
-            <div className="Chat-list" />
+            <div className="Chat-list">
+              <FollowersCard status />
+            </div>
           </div>
         </div>
         <div className="Right-side-chat">
-          <ChatBox currentchat={currentchat} currentUser={User} />
+          <ChatBox
+            currentchat={currentchat}
+            currentUser={User}
+            setSendmessages={setSendmessages}
+            receviemessages={receviemessages}
+          />
         </div>
       </div>
     </>

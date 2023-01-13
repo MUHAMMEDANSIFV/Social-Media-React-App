@@ -1,21 +1,27 @@
-import mongoose from 'mongoose';
+import mongoose, { Schema } from 'mongoose';
 
-const commentSchema = mongoose.Schema({
-  user: String,
-  postid: String,
-  comment: [
-    {
-      commentlikes: [
-        {
-          user: String,
-        },
-      ],
-      commentreplay: [
-        {
-          user: String,
-          replay: String,
-        },
-      ],
+const commentSchema = mongoose.Schema(
+  {
+    postid: String,
+    userid: {
+      type: Schema.Types.ObjectId,
+      ref: 'user',
     },
-  ],
-}, { timestamps: true });
+    text: String,
+    likes: [
+      {
+        user: Schema.Types.ObjectId,
+        likedAt: {
+          type: Date,
+          default: Date.now(),
+        },
+      },
+    ],
+    parent: {
+      type: String,
+    }
+  },
+  { timestamps: true },
+);
+
+export default mongoose.model('comment', commentSchema);

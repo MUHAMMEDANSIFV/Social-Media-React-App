@@ -11,7 +11,6 @@ const PostSchema = mongoose.Schema({
     {
       user: {
         type: Schema.Types.ObjectId,
-        ref: 'user',
       },
       likedAt: {
         type: Date,

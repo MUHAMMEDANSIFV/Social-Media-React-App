@@ -1,12 +1,9 @@
 .FollowresCard {
-     width: 100%;
      border-radius: 0.7rem;
      gap: 1rem;
      display: flex;
      flex-direction: column;
      font-size: 13px;
-     height: auto;
-     overflow: auto;
 }
 
 .Follower {
@@ -19,6 +16,7 @@
 .Follower > div {
      display: flex;
      gap: 10px;
+     overflow-x: scroll;
 }
 
 .followerimg {

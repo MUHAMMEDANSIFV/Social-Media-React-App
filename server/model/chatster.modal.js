@@ -6,7 +6,7 @@ const chatsterSchema = mongoose.Schema({
     {
       personid: {
         type: Schema.Types.ObjectId,
-        ref: 'user',
+        ref: 'user'
       },
     },
   ],

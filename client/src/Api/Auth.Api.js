@@ -1,10 +1,11 @@
 import axios from './Axios.instence';
 
 axios.defaults.withCredentials = true;
+const baseURL = 'auth';
 
 export const jwtverifycation = async (callback) => {
   try {
-    const response = await axios.get('/auth/jwtveryfication', {
+    const response = await axios.get(`/${baseURL}/jwtveryfication`, {
       withCredentials: true,
     });
     callback(response);
@@ -15,7 +16,7 @@ export const jwtverifycation = async (callback) => {
 
 export const Login = async (formdata, callback) => {
   try {
-    const user = await axios.post('/auth/login', formdata, {
+    const user = await axios.post(`/${baseURL}/login`, formdata, {
       withCredentials: true,
     });
     if (user) {
@@ -30,7 +31,7 @@ export const Login = async (formdata, callback) => {
 
 export const Signup = async (formdata, callback) => {
   try {
-    const user = await axios.post('/auth/newuser/signup', formdata, {
+    const user = await axios.post(`/${baseURL}/newuser/signup`, formdata, {
       withCredentials: true,
     });
     if (user) {
@@ -45,7 +46,7 @@ export const Signup = async (formdata, callback) => {
 
 export const sendotp = async (email, callback) => {
   try {
-    const response = await axios.post('/auth/send-otp', { email });
+    const response = await axios.post(`/${baseURL}/send-otp`, { email });
     callback(response);
   } catch (err) {
     callback(err);
@@ -54,9 +55,22 @@ export const sendotp = async (email, callback) => {
 
 export const otpverification = async (otp, callback) => {
   try {
-    const response = await axios.post('/auth/Otp-verification', { OTP: otp });
+    const response = await axios.post(`/${baseURL}/Otp-verification`, { OTP: otp });
     console.log(response);
     callback(response);
+  } catch (err) {
+    callback(err);
+  }
+};
+
+export const forgottenpassword = async (data, callback) => {
+  try {
+    const response = await axios.post(`/${baseURL}/forgotten-password`, data);
+    if (response) {
+      callback(response);
+    } else {
+      callback('error');
+    }
   } catch (err) {
     callback(err);
   }

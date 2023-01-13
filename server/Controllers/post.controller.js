@@ -172,7 +172,7 @@ export const postlike = async (req, res) => {
 
 export const userposts = async (req, res) => {
   try {
-    console.log('hi');
+
     const userid = req.userinfo._id;
 
     const Posts = await PostSchema.aggregate([
@@ -207,7 +207,7 @@ export const userposts = async (req, res) => {
       },
       {
         $lookup: {
-          from: 'users',
+          from: 'user',
           localField: 'user',
           foreignField: '_id',
           as: 'users',
@@ -219,7 +219,6 @@ export const userposts = async (req, res) => {
     ]);
 
     const User = await Userschema.findById(userid);
-    console.log(User);
 
     res.status(200).json({ success: true, posts: Posts, user: User });
   } catch (err) {
@@ -264,7 +263,6 @@ async function find_all_post(userid) {
         $unwind: '$users',
       },
     ]);
-    console.log(Posts);
     return Posts;
   } catch (err) {
     console.log(err);

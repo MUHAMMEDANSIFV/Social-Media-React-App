@@ -1,28 +1,82 @@
 /* eslint-disable no-underscore-dangle */
 import React, {
-  useState, Fragment, useEffect, useRef,
+  useState, useEffect,
 } from 'react';
 
 import './ChatBox.css';
 import InputEmoji from 'react-input-emoji';
 import PropTypes from 'prop-types';
-import { io } from 'socket.io-client';
+import { ToastContainer, toast } from 'react-toastify';
+import { format } from 'timeago.js';
+import { addnewmessage, getallmessage } from '../../Api/Chat.Api';
 
-function ChatBox({ currentUser, currentchat }) {
+function ChatBox({
+  currentUser,
+  currentchat,
+  setSendmessages,
+  receviemessages,
+}) {
   const [newMessage, setNewMessages] = useState('');
   const [chats, setChats] = useState(null);
 
-  const socket = useRef();
+  const toastoptions = {
+    position: 'bottom-left',
+    autoClose: 5000,
+    pauseOnHover: true,
+    draggable: true,
+  };
+
+  const handlesend = () => {
+    const data = {
+      senderId: currentUser._id,
+      receiverid: currentchat._id,
+      text: newMessage,
+    };
+    if (chats) setChats([...chats, data]);
+    else setChats([data]);
+    addnewmessage(data, (response) => {
+      if (response.success) {
+        setSendmessages(data);
+        setNewMessages('');
+      } else {
+        toast.error('message send not working', toastoptions);
+      }
+    });
+  };
 
   const handlechange = (newMessages) => {
     setNewMessages(newMessages);
   };
 
   useEffect(() => {
-    setChats('hi');
-    socket.current = io('http://localhost:8000');
-    socket.current.emit('new-user-add', currentUser._id);
-  }, [currentUser]);
+    try {
+      if (currentchat) {
+        const data = {
+          currentUser: currentUser._id,
+          currentchatster: currentchat._id,
+        };
+        getallmessage(data, (response) => {
+          if (response.success) {
+            setChats(response.message);
+          } else if (response.error) {
+            toast.error(response.error, toastoptions);
+          } else {
+            toast.error('some network error :', toastoptions);
+          }
+        });
+      } else {
+        setChats(null);
+      }
+    } catch (err) {
+      toast.error('some network error', toastoptions);
+    }
+  }, [currentchat]);
+
+  useEffect(() => {
+    if (receviemessages) {
+      setChats([...chats, receviemessages]);
+    }
+  }, [receviemessages]);
 
   return (
     <div className="ChatBox-container">
@@ -60,20 +114,16 @@ function ChatBox({ currentUser, currentchat }) {
           </div>
 
           <div className="chat-body">
-            {chats ? (
-              <>
-                <div className="message ">
-                  <span>Hi how are you</span>
-                  <span>10/12/2022</span>
+            {chats
+              ? chats.map((message) => (
+                <div className={message.senderId === currentUser._id ? 'message own' : 'message'}>
+                  <span>{message.text}</span>
+                  <span>{format(message.createdAt)}</span>
                 </div>
-                <div className="message ">
-                  <span>I am fine</span>
-                  <span>10/12/2022</span>
-                </div>
-              </>
-            ) : (
-              ''
-            )}
+              ))
+              : (
+                ''
+              )}
           </div>
           <div className="chat-sender">
             <div>+</div>
@@ -81,7 +131,7 @@ function ChatBox({ currentUser, currentchat }) {
               value={newMessage}
               onChange={(e) => handlechange(e)}
             />
-            <div className="send-button button">
+            <div className="send-button button" onClick={handlesend}>
               Send
             </div>
           </div>
@@ -91,6 +141,7 @@ function ChatBox({ currentUser, currentchat }) {
           <span>Tap on a Chat to start Conversation</span>
         </div>
       )}
+      <ToastContainer />
     </div>
   );
 }
@@ -98,6 +149,8 @@ function ChatBox({ currentUser, currentchat }) {
 ChatBox.propTypes = {
   currentUser: PropTypes.string.isRequired,
   currentchat: PropTypes.string.isRequired,
+  setSendmessages: PropTypes.string.isRequired,
+  receviemessages: PropTypes.string.isRequired,
 };
 
 export default ChatBox;
