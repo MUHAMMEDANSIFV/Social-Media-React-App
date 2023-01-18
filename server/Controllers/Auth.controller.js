@@ -183,7 +183,7 @@ export const refreshtoken = (req, res) => {
 
 export const verifytokens = (req, res, next) => {
   try {
-    if (req.cookies?.accesstoken) {
+    if (req.cookies.accesstoken) {
       jwt.verify(
         req.cookies.accesstoken,
         process.env.ACCESS_TOKEN_SECRET_KEY,
