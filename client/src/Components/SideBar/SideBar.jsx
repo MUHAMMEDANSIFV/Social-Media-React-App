@@ -3,17 +3,25 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import './SideBar.css';
+import { toast } from 'react-toastify';
 import axios from '../../Api/Axios.instence';
 
 function SideBar() {
   const navigate = useNavigate();
+
+  const toastoptions = {
+    position: 'bottom-left',
+    autoClose: 5000,
+    pauseOnHover: true,
+    draggable: true,
+  };
 
   const Logout = async () => {
     const response = await axios.get('/auth/Logout', { withCredentials: true });
     if (response.success) {
       navigate('/');
     } else {
-      alert(response.error);
+      toast.error('some network error find please try agin', toastoptions);
     }
   };
 

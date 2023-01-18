@@ -36,6 +36,7 @@ function Chat() {
       socket.current = io('http://localhost:8000');
       socket.current.emit('new-user-add', User._id);
     }
+    setreceviemessages('');
   }, [User]);
 
   useEffect(() => {
@@ -44,11 +45,11 @@ function Chat() {
     }
   }, [sendmessages]);
 
-  useEffect(() => {
-    socket.current.on('recevie-messages', (data) => {
-      setreceviemessages(data);
-    });
-  }, []);
+  // useEffect(() => {
+  //   socket.current.on('recevie-messages', (data) => {
+  //     setreceviemessages(data);
+  //   });
+  // }, []);
 
   useEffect(() => {
     allchatster((response) => {
@@ -67,7 +68,7 @@ function Chat() {
       setLoader(false);
     });
   }, []);
-  if (loader !== false) {
+  if (loader) {
     return (
       <div className="chatloader">
         <Loader />

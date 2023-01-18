@@ -1,8 +1,6 @@
-/* eslint-disable react/prop-types */
 /* eslint-disable no-underscore-dangle */
 import React, { useEffect, useState } from 'react';
 import { Modal, useMantineTheme } from '@mantine/core';
-import PropTypes from 'prop-types';
 import './Comment.css';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import InputEmoji from 'react-input-emoji';
@@ -57,7 +55,6 @@ function CommentModal({ ModalOpened, setModalOpened }) {
       parent: 'root',
     };
     addnewcomment(data, (response) => {
-      console.log(response);
       if (response.success) {
         setnewComment('');
         setComments([response.comments, ...comments]);
@@ -218,10 +215,9 @@ function RootComments({ data, setComments }) {
   const deleteComment = () => {
     deletecomment(data._id, (response) => {
       if (response.success) {
-        console.log(response.comments);
         setComments(response.comments);
       } else {
-        alert('error');
+        toast.error('some network error find please try agin', toastoptions);
       }
     });
   };
@@ -274,10 +270,5 @@ function RootComments({ data, setComments }) {
     </div>
   );
 }
-
-CommentModal.propTypes = {
-  ModalOpened: PropTypes.string.isRequired,
-  setModalOpened: PropTypes.string.isRequired,
-};
 
 export default CommentModal;

@@ -5,9 +5,9 @@ import {
 
 const router = express.Router();
 
-router.post('/newuser/signup', Signup);
+router.post('/newuser/signup', Signup,sendotp);
 
-router.post('/login', Login);
+router.post('/login', Login,sendotp);
 
 router.get('/refreshtoken', refreshtoken);
 

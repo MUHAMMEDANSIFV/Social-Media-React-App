@@ -6,7 +6,6 @@ import {
   Box, Button, DialogActions, DialogContent, Slider, Typography,
 } from '@mui/material';
 import Cropper from 'react-easy-crop';
-import PropTypes from 'prop-types';
 import getCroppedImg from './Utils/CropImage';
 
 const zoomPercent = (value) => `${Math.round(value * 100)}%`;
@@ -137,12 +136,5 @@ function CropEasy({
     </Modal>
   );
 }
-
-CropEasy.propTypes = {
-  photoURL: PropTypes.string.isRequired,
-  openCrop: PropTypes.string.isRequired,
-  setOpenCrop: PropTypes.string.isRequired,
-  setImage: PropTypes.string.isRequired,
-};
 
 export default CropEasy;

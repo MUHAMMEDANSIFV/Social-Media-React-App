@@ -21,11 +21,10 @@ instance.interceptors.response.use(
     } else if (error.response.status === 401) {
       try {
         originalRequest._retry = true;
-        const refreshtoken = await instance.get(
+        await instance.get(
           '/auth/refreshtoken',
           { withCredentials: true },
         );
-        console.log(refreshtoken);
         const result = await axios(originalRequest);
         return result.data;
       } catch (err) {

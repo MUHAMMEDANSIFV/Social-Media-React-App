@@ -1,7 +1,13 @@
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import mongoose from 'mongoose';
+import cloudinary from 'cloudinary';
 import Userschema from '../model/user.model.js';
+import multer from 'multer';
+import fs from 'fs';
+
+if (!fs.existsSync('./uploads')) {
+  fs.mkdirSync('./uploads');
+}
 
 export const home = async (req, res) => {
   try {
@@ -113,6 +119,108 @@ export const getAllUser = async (req, res) => {
 
     res.status(200).json({ success: true, AllUser: alluser });
   } catch (err) {
+    res.status(500).json({ error: err });
+  }
+};
+
+const storage = multer.diskStorage({
+  destination(req, file, cb) {
+    cb(null, './uploads');
+  },
+  filename(req, file, cb) {
+    cb(null, file.originalname);
+  },
+});
+
+export const upload = multer({ storage });
+
+const uploadToCloudinary = async (localFilePath) => {
+  try {
+    const mainFolderName = 'main';
+
+    const filePathOnCloudinary = `${mainFolderName}/${localFilePath}`;
+
+    const result = await cloudinary.uploader.upload(localFilePath, {
+      public_id: filePathOnCloudinary,
+    });
+
+    if (result) return result;
+    false;
+  } catch (err) {
+    console.log(err);
+    return err;
+  }
+};
+
+export const updateprofile = async (req, res) => {
+  try {
+    let locaFilePath;
+    if (req.file) {
+      console.log(req.file)
+      locaFilePath = req.file.path;
+    } else {
+      console.log('file not found');
+      res.json({ error: 'file not found' });
+    }
+
+    const file = await uploadToCloudinary(locaFilePath);
+    console.log(file)
+    if (file.public_id) {
+
+      const response = await Userschema.findByIdAndUpdate(req.userinfo._id,{
+        $set:{
+          profile: {
+            profileurl: file.secure_url,
+            profileid: file.public_id
+          }
+        }
+      })
+      console.log(response)
+      res.json({
+        success: 'profile uploading is successfully finished',
+        user:response,
+      });
+    } else {
+      res.json({ error: 'file uploading is failed pelase try again' });
+    }
+  } catch (err) {
+    console.log(err)
+    res.status(500).json({ error: err });
+  }
+};
+
+export const followrequestsend = async (req, res) => {
+  try {
+    
+    const userid = req.userinfo._id
+    const followerid = req.body.followerid
+
+    console.log(userid)
+
+    const following = await Userschema.findByIdAndUpdate(userid,{
+      $push:{
+        following:
+          {
+            followerid: followerid,
+          }
+      }
+    })
+
+    const followers = await Userschema.findByIdAndUpdate(followerid,{
+      $push:{
+        followers:
+          {
+            followerid: userid,
+          },
+      }
+    })
+
+    if(followers && following){
+
+    }
+
+  } catch (err) {
+    console.log(err)
     res.status(500).json({ error: err });
   }
 };

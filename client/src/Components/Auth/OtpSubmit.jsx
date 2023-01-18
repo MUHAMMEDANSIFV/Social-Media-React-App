@@ -1,10 +1,13 @@
+/* eslint-disable react/prop-types */
 import React, { Fragment, useState } from 'react';
-import PropTypes from 'prop-types';
 import { ToastContainer, toast } from 'react-toastify';
 import { sendotp, otpverification } from '../../Api/Auth.Api';
 import SetNewPassword from './SetNewPassword';
 
-function OtpSubmit({ setOtpSubmit, Otpsubmit }) {
+// eslint-disable-next-line react/prop-types
+function OtpSubmit({
+  setOtpSubmit, Otpsubmit, Signuppage, setState, setForgotPassword,
+}) {
   const [otp, setOtp] = useState(null);
   const [NewPassword, SetNewpassword] = useState(false);
 
@@ -29,7 +32,15 @@ function OtpSubmit({ setOtpSubmit, Otpsubmit }) {
     e.preventDefault();
     if (otp) {
       otpverification(otp, (response) => {
-        if (response.error === 'jwt expired') {
+        if (response.success) {
+          SetNewPassword(true);
+          if (Signuppage) {
+            setOtpSubmit(false);
+            setState(true);
+          } else {
+            SetNewPassword(true);
+          }
+        } else if (response.error === 'jwt expired') {
           toast.error(
             'Your Otp valid only 5 minuts. Its already expaire',
             toastoptions,
@@ -38,17 +49,20 @@ function OtpSubmit({ setOtpSubmit, Otpsubmit }) {
           toast.error('Enterd OTP is incorrect Please try again', toastoptions);
         } else if (response.error) {
           toast.error('OTP Verification is failed please try again');
-        } else if (response.success) {
-          console.log('here');
-          SetNewpassword(true);
-        } else {
-          toast.error('An error find OTP validation Please try again');
         }
       });
     }
   };
 
-  if (NewPassword) return <SetNewPassword OtpSubmit={OtpSubmit} SetNewpassword={SetNewpassword} />;
+  if (NewPassword) {
+    return (
+      <SetNewPassword
+        OtpSubmit={OtpSubmit}
+        SetNewpassword={SetNewpassword}
+        setForgotPassword={setForgotPassword}
+      />
+    );
+  }
   return (
     <>
       <form
@@ -89,10 +103,5 @@ function OtpSubmit({ setOtpSubmit, Otpsubmit }) {
     </>
   );
 }
-
-OtpSubmit.propTypes = {
-  setOtpSubmit: PropTypes.string.isRequired,
-  Otpsubmit: PropTypes.string.isRequired,
-};
 
 export default OtpSubmit;

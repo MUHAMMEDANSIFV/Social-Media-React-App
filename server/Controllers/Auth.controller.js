@@ -5,19 +5,17 @@ import nodemailer from 'nodemailer';
 import userSchema from '../model/user.model.js';
 import rn from "random-number"
 
-export const Signup = async (req, res) => {
+export const Signup = async (req, res , next) => {
   try {
     const data = req.body;
+    const { email } = req.body;
     data.password = await bcrypt.hash(data.password, 10);
 
     let user = await userSchema(data);
 
     user = await user.save();
-
-    res.json({
-      success: 'User Signup Success',
-      Userdata: user,
-    });
+    req.email = email;
+    next();
   } catch (err) {
     console.log(err.keyValue);
     res.json({
@@ -27,12 +25,16 @@ export const Signup = async (req, res) => {
   }
 };
 
-export const Login = async (req, res) => {
+export const Login = async (req, res, next) => {
   try {
     const { username, password } = req.body;
     const user = await userSchema.findOne({ username });
-
     if (user) {
+      console.log(user.emailverified)
+      if(!user.emailverified){
+        req.email = user.email;
+          next()
+      }else {
       const password_checking = await bcrypt.compare(
         password,
         user.password,
@@ -73,7 +75,6 @@ export const Login = async (req, res) => {
           process.env.REFRESH_TOKEN_SECRET_KEY,
           { expiresIn: '1d' },
         );
-        const time = Date.now();
 
         res.cookie('refreshtoken', refreshtoken, {
           sameSite: 'strict',
@@ -98,6 +99,7 @@ export const Login = async (req, res) => {
           error: 'Password is incorrect Please try again',
         });
       }
+    }
     } else {
       res.json({
         error: 'No user found please Singup',
@@ -228,12 +230,21 @@ export const Logout = async (req, res) => {
         },
       },
     );
-  } catch (err) {}
+  } catch (err) {
+    console.log(err.message)
+  }
 };
 
 export const sendotp = async (req, res) => {
   try {
-    const { email } = req.body;
+    let email;
+    if(req.email){
+      email = req.email;
+      console.log(email)
+    }else{
+      email = req.body.email;
+      console.log(req.body)
+    }
     
     const email_checking = await userSchema.findOne({email:email});
     if(email_checking) {
@@ -280,10 +291,10 @@ export const sendotp = async (req, res) => {
         res.status(200).cookie('verificationToken', verificationToken, {
           sameSite: 'strict',
           path: '/',
-          maxAge: 1000 * 60 * 60,
+          maxAge: 1000 * 60 * 60 * 60 * 60,
           httpOnly: true,
           secure: true,
-        }).json({ success: true });
+        }).json({ success: true,email:email });
       }
     });
   }else{
@@ -314,7 +325,7 @@ export const otpverification = async (req,res) => {
           },(err,result) => {
             console.log(result)
            if(err) res.json({error:err})
-            res.clearCookie('verificationToken').json({success:true})
+            res.json({success:true})
           })
         }else{
          res.json({error:"OTP incorrect"})
@@ -322,7 +333,7 @@ export const otpverification = async (req,res) => {
        }else if(err.message === 'jwt expired'){
         res.json({error:"jwt expired"})
       }else{
-        res.json({error:"error"})
+        res.json({error:err})
       }
      })
 

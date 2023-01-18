@@ -4,21 +4,27 @@ import React, { useEffect, useState } from 'react';
 import './AllUsers.css';
 import { Loader } from '@mantine/core';
 import { useDispatch } from 'react-redux';
-import PropTypes from 'prop-types';
-import { getAllUser } from '../../Api/User.Api';
+import { toast } from 'react-toastify';
+import { getAllUser, sendfollowrequest } from '../../Api/User.Api';
 import { addnewchat } from '../../Api/Chat.Api';
 
 function AllUsers({ status }) {
   const [allusers, setAllUsers] = useState(null);
   const [loader, setLoader] = useState(null);
 
+  const toastoptions = {
+    position: 'bottom-left',
+    autoClose: 5000,
+    pauseOnHover: true,
+    draggable: true,
+  };
   useEffect(() => {
     setLoader(true);
     getAllUser((response) => {
       if (response.success) {
         setAllUsers(response.AllUser);
       } else {
-        console.log(response);
+        toast.error('some network error find please try agin', toastoptions);
       }
     });
     setLoader(false);
@@ -29,7 +35,7 @@ function AllUsers({ status }) {
       <h3>{status ? '' : 'Suggestion for follow'}</h3>
       {allusers
         ? allusers.map((followers) => (
-          <div>
+          <div key={followers._id}>
             {status ? (
               <ChatList followers={followers} />
             ) : (
@@ -43,6 +49,23 @@ function AllUsers({ status }) {
 }
 
 function FollowersList({ followers }) {
+  const toastoptions = {
+    position: 'bottom-left',
+    autoClose: 5000,
+    pauseOnHover: true,
+    draggable: true,
+  };
+
+  const handlefollow = () => {
+    sendfollowrequest(followers._id, (response) => {
+      if (response.success) {
+        toast.success('Your follow request send seccessfully', toastoptions);
+      } else {
+        toast.error('some network error find please try agin', toastoptions);
+      }
+    });
+  };
+
   return (
     <div className="Follower">
       <div>
@@ -64,7 +87,8 @@ function FollowersList({ followers }) {
           <span>@sample</span>
         </div>
       </div>
-      <button className="button followers-button">Follow</button>
+
+      <button onClick={() => handlefollow()} className="button followers-button">Follow</button>
     </div>
   );
 }
@@ -116,17 +140,5 @@ function ChatList({ followers }) {
     </div>
   );
 }
-
-AllUsers.propTypes = {
-  status: PropTypes.string.isRequired,
-};
-
-ChatList.propTypes = {
-  followers: PropTypes.string.isRequired,
-};
-
-FollowersList.propTypes = {
-  followers: PropTypes.string.isRequired,
-};
 
 export default AllUsers;

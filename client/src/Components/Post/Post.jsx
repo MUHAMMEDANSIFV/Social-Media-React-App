@@ -7,7 +7,6 @@ import MenuItem from '@mui/material/MenuItem';
 import Menu from '@mui/material/Menu';
 import { useSelector, useDispatch } from 'react-redux';
 import swal from 'sweetalert';
-import PropTypes from 'prop-types';
 import comment from '../../img/comment.png';
 import Share from '../../img/share.png';
 import Heart from '../../img/like.png';
@@ -35,7 +34,7 @@ function Post({ data }) {
   };
 
   const handleClose = () => {
-    setMoreoptions(false);
+    setMoreoptions('false');
   };
 
   const open = Boolean(moreoptions);
@@ -58,7 +57,6 @@ function Post({ data }) {
           withCredentials: true,
         });
         setMoreoptions(false);
-        console.log(response);
         if (response.success) {
           dispatch({
             type: 'posts',
@@ -78,7 +76,6 @@ function Post({ data }) {
     setLikesCount(Liked ? likescount - 1 : likescount + 1);
     setLiked(!Liked);
     likepost({ postid: id }, (response) => {
-      console.log(response);
       if (response.success) {
         dispatch({
           type: 'posts',
@@ -101,7 +98,7 @@ function Post({ data }) {
             <MoreVertIcon />
           </IconButton>
           <Menu
-            moreoptions={moreoptions}
+            moreoptions={moreoptions.toString()}
             keepMounted
             onClose={handleClose}
             open={open}
@@ -140,9 +137,5 @@ function Post({ data }) {
     </div>
   );
 }
-
-Post.propTypes = {
-  data: PropTypes.string.isRequired,
-};
 
 export default React.memo(Post);

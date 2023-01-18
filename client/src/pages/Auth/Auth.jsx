@@ -17,7 +17,6 @@ function Auth() {
 
   useEffect(() => {
     jwtverifycation((status) => {
-      console.log(status);
       if (status.success) {
         navigate('/home');
       } else {

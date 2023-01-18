@@ -1,10 +1,10 @@
 /* eslint-disable react/no-unescaped-entities */
 import React, { useState } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
-import PropTypes from 'prop-types';
 import { forgottenpassword } from '../../Api/Auth.Api';
 
-function SetNewPassword({ OtpSubmit, SetNewpassword }) {
+// eslint-disable-next-line react/prop-types
+function SetNewPassword({ OtpSubmit, SetNewpassword, setForgotPassword }) {
   const [formdata, setFormdata] = useState({
     password: '',
     confirmpassword: '',
@@ -57,6 +57,9 @@ function SetNewPassword({ OtpSubmit, SetNewpassword }) {
       forgottenpassword(data, (response) => {
         if (response.success) {
           toast.success('Password is reset seccessfully', toastoptions);
+          setForgotPassword(false);
+        } else {
+          toast.error('Password is reset filed please try again', toastoptions);
         }
       });
     }
@@ -113,10 +116,5 @@ function SetNewPassword({ OtpSubmit, SetNewpassword }) {
     </>
   );
 }
-
-SetNewPassword.propTypes = {
-  SetNewpassword: PropTypes.bool.isRequired,
-  OtpSubmit: PropTypes.bool.isRequired,
-};
 
 export default SetNewPassword;

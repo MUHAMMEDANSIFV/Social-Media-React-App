@@ -11,3 +11,27 @@ export const getAllUser = async (callback) => {
     callback(err);
   }
 };
+
+export const profileupload = async (photo, callback) => {
+  try {
+    const response = await axios.post('/user/upload-profile-photo', photo, {
+      headers: {
+        Accept: 'application/json',
+        'Access-Control-Allow-Origin': '*',
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    callback(response);
+  } catch (err) {
+    callback(err.message);
+  }
+};
+
+export const sendfollowrequest = async (id, callback) => {
+  try {
+    const response = await axios.post('/user/send-follow-request', { followerid: id });
+    callback(response);
+  } catch (err) {
+    callback(err.message);
+  }
+};

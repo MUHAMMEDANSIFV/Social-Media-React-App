@@ -1,22 +1,41 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import './ProfileCard.css';
 import { Link } from 'react-router-dom';
-import { useSelector } from 'react-redux';
-import PropTypes from 'prop-types';
-import UploadIcon from '@mui/icons-material/Upload';
+import { useSelector, useDispatch } from 'react-redux';
+import FormData from 'form-data';
+import Loader from '../Loder/Loder';
 import Cover from '../../img/cover.jpg';
 import EditprofileModel from '../EditprofileModal/EditprofileModel';
+import { profileupload } from '../../Api/User.Api';
 
 function ProfileCard({ Postscount, ProfilePage }) {
   const [ModalOpened, setModalOpened] = useState(false);
 
   const User = useSelector((state) => state.user);
+  const profileref = useRef();
+  const dispatch = useDispatch();
 
+  const formdata = new FormData();
+  const onImagechange = (event) => {
+    if (event.target.files[0]) {
+      formdata.append('profile', event.target.files[0]);
+      profileupload(formdata, (response) => {
+        if (response.success) {
+          dispatch({
+            type: 'user',
+            payload: response.user,
+          });
+        }
+      });
+    }
+  };
+  if (!User) return (<Loader />);
   return (
     <div className="ProfileCard">
       <div className="ProfileImage">
         <img src={Cover} alt="" />
         <img
+          onClick={() => profileref.current.click()}
           src={
                               User.profile
                                 ? User.profile.profileurl
@@ -24,9 +43,7 @@ function ProfileCard({ Postscount, ProfilePage }) {
                          }
           alt=""
         />
-        <div className="upload-icon">
-          <UploadIcon />
-        </div>
+        <input onChange={(e) => onImagechange(e)} style={{ display: 'none' }} type="file" ref={profileref} name="profile" id="" />
       </div>
 
       <div className="ProfileName">
@@ -82,10 +99,5 @@ function ProfileCard({ Postscount, ProfilePage }) {
     </div>
   );
 }
-
-ProfileCard.propTypes = {
-  Postscount: PropTypes.string.isRequired,
-  ProfilePage: PropTypes.string.isRequired,
-};
 
 export default React.memo(ProfileCard);

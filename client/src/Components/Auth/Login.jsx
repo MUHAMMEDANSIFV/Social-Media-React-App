@@ -1,9 +1,9 @@
 import React, { Fragment, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
-import PropTypes from 'prop-types';
+import { useNavigate } from 'react-router-dom';
 import { Login as Loginapi } from '../../Api/Auth.Api';
 import ForgottenPass from './ForgottenPassword';
+import OtpSubmit from './OtpSubmit';
 
 function Login({ state, setState }) {
   const [formdata, setformdata] = useState({
@@ -11,6 +11,7 @@ function Login({ state, setState }) {
     password: '',
   });
   const [ForgottenPassword, setForgotPassword] = useState(false);
+  const [Otpsubmit, setOtpSubmit] = useState(false);
 
   const navigate = useNavigate();
 
@@ -32,8 +33,10 @@ function Login({ state, setState }) {
     event.preventDefault();
     if (handlevalidation()) {
       Loginapi(formdata, (status) => {
-        if (status.success) {
+        if (status.success && status.jwt) {
           navigate('/home');
+        } else if (status.success) {
+          setOtpSubmit(status.email);
         } else {
           toast.error(status.error, toastoptions);
         }
@@ -44,6 +47,18 @@ function Login({ state, setState }) {
   const handlechange = (event) => {
     setformdata({ ...formdata, [event.target.name]: event.target.value });
   };
+
+  if (Otpsubmit) {
+    return (
+      <div className="a-right">
+        <OtpSubmit
+          setOtpSubmit={setOtpSubmit}
+          Otpsubmit={Otpsubmit}
+          Signuppage
+        />
+      </div>
+    );
+  }
   return (
     <>
       <div className="a-right">
@@ -100,10 +115,5 @@ function Login({ state, setState }) {
     </>
   );
 }
-
-Login.propTypes = {
-  setState: PropTypes.string.isRequired,
-  state: PropTypes.string.isRequired,
-};
 
 export default Login;

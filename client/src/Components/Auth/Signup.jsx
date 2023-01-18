@@ -1,13 +1,13 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 import React, { useState, Fragment } from 'react';
-import PropTypes from 'prop-types';
 import { ToastContainer, toast } from 'react-toastify';
 import PasswordStrengthBar from 'react-password-strength-bar';
 import { Signup as Signupapi } from '../../Api/Auth.Api';
+import OtpSubmit from './OtpSubmit';
 
 function Signup({ setState, state }) {
-  const [otpverify, setOtpverify] = useState(false);
+  const [Otpsubmit, setOtpSubmit] = useState(false);
   const [formdata, setformdata] = useState({
     firstname: '',
     lastname: '',
@@ -58,7 +58,7 @@ function Signup({ setState, state }) {
     if (handlevalidation()) {
       Signupapi(formdata, (status) => {
         if (status.success) {
-          setState(!state);
+          setOtpSubmit(formdata.email);
         } else if (status.message) {
           toast.error(
             `${status.message[0]} is already taken try another one`,
@@ -74,10 +74,15 @@ function Signup({ setState, state }) {
   const handlechange = (event) => {
     setformdata({ ...formdata, [event.target.name]: event.target.value });
   };
-  if (otpverify) {
+  if (Otpsubmit) {
     return (
       <div className="a-right">
-        <h1>{setOtpverify}</h1>
+        <OtpSubmit
+          setOtpSubmit={setOtpSubmit}
+          Otpsubmit={Otpsubmit}
+          Signuppage
+          setState={setState}
+        />
       </div>
     );
   }
@@ -175,10 +180,5 @@ function Signup({ setState, state }) {
     </>
   );
 }
-
-Signup.propTypes = {
-  setState: PropTypes.string.isRequired,
-  state: PropTypes.string.isRequired,
-};
 
 export default Signup;

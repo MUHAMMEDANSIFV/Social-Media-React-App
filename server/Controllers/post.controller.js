@@ -11,7 +11,7 @@ if (!fs.existsSync('./uploads')) {
 
 const storage = multer.diskStorage({
   destination(req, file, cb) {
-    cb(null, './uploads');
+    cb(null, './uploads/profile');
   },
   filename(req, file, cb) {
     cb(null, file.originalname);

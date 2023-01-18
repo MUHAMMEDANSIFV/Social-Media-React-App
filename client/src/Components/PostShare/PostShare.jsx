@@ -6,7 +6,6 @@ import {
 } from '@iconscout/react-unicons';
 import swal from 'sweetalert';
 import Formdata from 'form-data';
-import PropTypes from 'prop-types';
 import ProfileImage from '../../img/profileImg.jpg';
 import axios from '../../Api/Axios.instence';
 import CropEasy from '../Crop/CropEasy';
@@ -79,7 +78,6 @@ function PostShare({ setPostcount, Postscount }) {
         }
       }
     } catch (err) {
-      console.log(err);
       toast.error(
         'Your network is not working proper please check',
         toastoptions,
@@ -185,10 +183,5 @@ function PostShare({ setPostcount, Postscount }) {
     </>
   );
 }
-
-PostShare.propTypes = {
-  setPostcount: PropTypes.string.isRequired,
-  Postscount: PropTypes.string.isRequired,
-};
 
 export default PostShare;

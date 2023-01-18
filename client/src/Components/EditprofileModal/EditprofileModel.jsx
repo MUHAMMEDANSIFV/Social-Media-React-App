@@ -5,7 +5,6 @@ import React, { Fragment, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import './EditprofileModel.css';
 import { toast, ToastContainer } from 'react-toastify';
-import PropTypes from 'prop-types';
 import axios from '../../Api/Axios.instence.js';
 
 function EditprofileModel({ ModalOpened, setModalOpened }) {
@@ -101,7 +100,6 @@ function EditprofileModel({ ModalOpened, setModalOpened }) {
       const response = await axios.post('/user/editprofile', formdata, {
         withCredentials: true,
       });
-      console.log(response.data);
       if (response.success) {
         afterupdation();
         dispatch({
@@ -355,10 +353,5 @@ function EditprofileModel({ ModalOpened, setModalOpened }) {
     </>
   );
 }
-
-EditprofileModel.propTypes = {
-  ModalOpened: PropTypes.string.isRequired,
-  setModalOpened: PropTypes.string.isRequired,
-};
 
 export default React.memo(EditprofileModel);

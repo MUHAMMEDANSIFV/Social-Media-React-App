@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { Modal, useMantineTheme, Alert } from '@mantine/core';
 import { useSelector } from 'react-redux';
 import './ProfileModal.css';
-import PropTypes from 'prop-types';
 
 function ProfileModal({ ModalOpened, setModalOpened }) {
   const theme = useMantineTheme();
@@ -30,9 +29,7 @@ function ProfileModal({ ModalOpened, setModalOpened }) {
 
   const handlesubmit = (e) => {
     e.preventDefault();
-    if (handlevalidation()) {
-      console.log('success');
-    }
+    handlevalidation();
   };
 
   const handlechange = (e) => {
@@ -123,10 +120,5 @@ function ProfileModal({ ModalOpened, setModalOpened }) {
     </Modal>
   );
 }
-
-ProfileModal.propTypes = {
-  ModalOpened: PropTypes.string.isRequired,
-  setModalOpened: PropTypes.string.isRequired,
-};
 
 export default ProfileModal;

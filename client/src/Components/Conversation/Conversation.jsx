@@ -1,10 +1,9 @@
+/* eslint-disable no-underscore-dangle */
 import React from 'react';
-import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 
 function Conversation({ setcurrentchat }) {
   const data = useSelector((state) => state.chatmembers);
-  console.log(data);
   if (!data) {
     return (
       <div>
@@ -14,15 +13,15 @@ function Conversation({ setcurrentchat }) {
   }
   return (
     <>
-      {data.chatsters.map((chatster) => (
+      {data.chatsters.map((element) => (
         <>
           <div className="follower conversation">
-            <div onClick={() => setcurrentchat(chatster.personid)}>
+            <div onClick={() => setcurrentchat(element.personid)}>
               <div className="online-dot" />
               <img
                 src={
-                    chatster.profile
-                      ? chatster.profile.profileurl
+                    element.profile
+                      ? element.profile.profileurl
                       : process.env.REACT_APP_PROFILE_URL
                   }
                 alt=""
@@ -30,7 +29,9 @@ function Conversation({ setcurrentchat }) {
                 style={{ width: '50px', height: '50px' }}
               />
               <div className="name" style={{ fontSize: '0.8rem' }}>
-                <span>{chatster.personid.username}</span>
+                <span>
+                  {element.personid.email}
+                </span>
                 <span>Online</span>
               </div>
             </div>
@@ -41,9 +42,5 @@ function Conversation({ setcurrentchat }) {
     </>
   );
 }
-
-Conversation.propTypes = {
-  setcurrentchat: PropTypes.string.isRequired,
-};
 
 export default Conversation;

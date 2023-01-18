@@ -22,7 +22,6 @@ function Profile() {
     userposts((response) => {
       if (response.success) {
         setPostsList(response.posts);
-        console.log(response);
         setLoading(false);
         setPostcount(response.posts.length);
         dispatch({

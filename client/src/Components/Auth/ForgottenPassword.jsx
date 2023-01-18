@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { toast } from 'react-toastify';
-import PropTypes from 'prop-types';
 import { sendotp } from '../../Api/Auth.Api';
 import OtpSubmit from './OtpSubmit';
 
@@ -34,7 +33,15 @@ function ForgottenPass({ setForgotPassword }) {
       });
     }
   };
-  if (Otpsubmit) return <OtpSubmit setOtpSubmit={setOtpSubmit} Otpsubmit={Otpsubmit} />;
+  if (Otpsubmit) {
+    return (
+      <OtpSubmit
+        setOtpSubmit={setOtpSubmit}
+        Otpsubmit={Otpsubmit}
+        setForgotPassword={setForgotPassword}
+      />
+    );
+  }
   return (
     <form
       onSubmit={(e) => handlesubmit(e)}
@@ -72,9 +79,5 @@ function ForgottenPass({ setForgotPassword }) {
     </form>
   );
 }
-
-ForgottenPass.propTypes = {
-  setForgotPassword: PropTypes.string.isRequired,
-};
 
 export default ForgottenPass;

@@ -50,7 +50,6 @@ const userSchema = mongoose.Schema(
       },
     },
     lastSeenAt: Date,
-    presence: Boolean,
     emailverified:{
       type:Boolean,
       default:false,
