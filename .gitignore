@@ -3,5 +3,4 @@
 /socket.io/node_modules
 /Admin/node_modules
 /server/.env
-/client/.env
-/Admin/.env
+./client/.env
